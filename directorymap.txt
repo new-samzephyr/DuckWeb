@@ -1,3 +1,0 @@
-a1b2c3=notimetothink
-d4e5f6=anotherdirectory
-g7h8i9=yetanotherdirectory
