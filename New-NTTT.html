@@ -92,9 +92,14 @@
     </div>
     <div id="topic">Press Start to Begin</div>
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
-    <div id="timer">15</div>
+    <div id="timer">20</div>
+    
+    <div>
+        <input type="range" id="time-selector" min="10" max="30" step="10" value="20" onchange="updateTime()">
+        <span id="selected-time">20</span> seconds (Recommended)
+    </div>
+    
     <button id="start-pause" onclick="startPauseGame()">Start</button>
-    <button id="skip" onclick="skipTopic()">Skip</button>
     <button id="restart" onclick="restartGame()">Restart</button>
 
     <div id="overlay"></div>
@@ -106,16 +111,16 @@
     <script>
         let topics = [];
         let timer;
-        let timeLeft = 15; // 15 seconds
+        let timeLeft = 20; // Default to 20 seconds
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
 
-        // Fetch topics from the JSON file
+        // Fetch topics from JSON file
         fetch('NTTT-Topics.json')
             .then(response => response.json())
             .then(data => {
-                topics = data; // Assign the fetched topics
+                topics = data;
             })
             .catch(error => console.error('Error fetching topics:', error));
 
@@ -123,7 +128,7 @@
             if (isPaused) return;
             if (timeLeft <= 0) {
                 changeTopic();
-                timeLeft = 15; // reset to 15 seconds
+                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
             } else {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
@@ -151,7 +156,7 @@
         function restartGame() {
             clearInterval(timer);
             timer = null;
-            timeLeft = 15;
+            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
@@ -175,10 +180,6 @@
             document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
         }
 
-        function skipTopic() {
-            changeTopic(); // Change to the next topic
-        }
-
         function showDefinition() {
             isPaused = true;
             document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
@@ -192,6 +193,12 @@
             document.getElementById('definition-modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+        }
+
+        function updateTime() {
+            const timeSelector = document.getElementById('time-selector');
+            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
+            document.getElementById('selected-time').innerText = timeLeft; // Update display
         }
     </script>
 </body>
