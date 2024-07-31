@@ -84,6 +84,10 @@
             display: none;
             z-index: 999;
         }
+        .button-container {
+            display: flex;
+            gap: 10px; /* Space between buttons */
+        }
     </style>
 </head>
 <body>
@@ -99,9 +103,11 @@
         <span id="selected-time">20</span> seconds (Recommended)
     </div>
     
-    <button id="start-pause" onclick="startPauseGame()">Start</button>
-    <button id="restart" onclick="restartGame()">Restart</button>
-    <button id="skip" onclick="skipTopic()">Skip</button>
+    <div class="button-container">
+        <button id="start-pause" onclick="startPauseGame()">Start</button>
+        <button id="restart" onclick="restartGame()">Restart</button>
+        <button id="skip" onclick="skipTopic()">Skip</button>
+    </div>
 
     <div id="overlay"></div>
     <div id="definition-modal">
