@@ -108,98 +108,99 @@
         <button onclick="closeDefinition()">Got it</button>
     </div>
 
-    <script>
-        let topics = [];
-        let timer;
-        let timeLeft = 20; // Default to 20 seconds
-        let currentTopicIndex = 0;
-        let isPaused = false;
-        let usedTopics = [];
+<script>
+    let topics = [];
+    let timer;
+    let timeLeft = 20; // Default to 20 seconds
+    let currentTopicIndex = 0;
+    let isPaused = false;
+    let usedTopics = [];
 
-        // Fetch topics from JSON file
-        fetch('NTTT-Topics.json')
-            .then(response => response.json())
-            .then(data => {
-                topics = data;
-            })
-            .catch(error => console.error('Error fetching topics:', error));
+    // Fetch topics from JSON file
+    fetch('NTTT-Topics.json')
+        .then(response => response.json())
+        .then(data => {
+            // Flatten the topics from all levels into a single array
+            topics = Object.values(data).flat();
+        })
+        .catch(error => console.error('Error fetching topics:', error));
 
-        function updateTimer() {
-            if (isPaused) return;
-            if (timeLeft <= 0) {
-                changeTopic();
-                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
-            } else {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-            }
-        }
-
-        function startPauseGame() {
-            const startPauseButton = document.getElementById('start-pause');
-            const definitionLink = document.getElementById('definition-link');
-            if (!timer) {
-                changeTopic();
-                timer = setInterval(updateTimer, 1000);
-                startPauseButton.innerText = 'Pause';
-                document.getElementById('restart').style.display = 'block';
-                definitionLink.style.display = 'block';
-            } else if (isPaused) {
-                isPaused = false;
-                startPauseButton.innerText = 'Pause';
-            } else {
-                isPaused = true;
-                startPauseButton.innerText = 'Continue';
-            }
-        }
-
-        function restartGame() {
-            clearInterval(timer);
-            timer = null;
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
-            currentTopicIndex = 0;
-            isPaused = false;
-            usedTopics = [];
-            document.getElementById('topic').innerText = 'Press Start to Begin';
+    function updateTimer() {
+        if (isPaused) return;
+        if (timeLeft <= 0) {
+            changeTopic();
+            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+        } else {
+            timeLeft--;
             document.getElementById('timer').innerText = timeLeft;
-            document.getElementById('restart').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Start';
-            document.getElementById('definition-link').style.display = 'none';
         }
+    }
 
-        function changeTopic() {
-            if (usedTopics.length === topics.length) {
-                usedTopics = []; // Reset if all topics used
-            }
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * topics.length);
-            } while (usedTopics.includes(randomIndex));
-            usedTopics.push(randomIndex);
-            currentTopicIndex = randomIndex;
-            document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
-        }
-
-        function showDefinition() {
-            isPaused = true;
-            document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
-            document.getElementById('definition-modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
-        }
-
-        function closeDefinition() {
+    function startPauseGame() {
+        const startPauseButton = document.getElementById('start-pause');
+        const definitionLink = document.getElementById('definition-link');
+        if (!timer) {
+            changeTopic();
+            timer = setInterval(updateTimer, 1000);
+            startPauseButton.innerText = 'Pause';
+            document.getElementById('restart').style.display = 'block';
+            definitionLink.style.display = 'block';
+        } else if (isPaused) {
             isPaused = false;
-            document.getElementById('definition-modal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+            startPauseButton.innerText = 'Pause';
+        } else {
+            isPaused = true;
+            startPauseButton.innerText = 'Continue';
         }
+    }
 
-        function updateTime() {
-            const timeSelector = document.getElementById('time-selector');
-            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
-            document.getElementById('selected-time').innerText = timeLeft; // Update display
+    function restartGame() {
+        clearInterval(timer);
+        timer = null;
+        timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+        currentTopicIndex = 0;
+        isPaused = false;
+        usedTopics = [];
+        document.getElementById('topic').innerText = 'Press Start to Begin';
+        document.getElementById('timer').innerText = timeLeft;
+        document.getElementById('restart').style.display = 'none';
+        document.getElementById('start-pause').innerText = 'Start';
+        document.getElementById('definition-link').style.display = 'none';
+    }
+
+    function changeTopic() {
+        if (usedTopics.length === topics.length) {
+            usedTopics = []; // Reset if all topics used
         }
-    </script>
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * topics.length);
+        } while (usedTopics.includes(randomIndex));
+        usedTopics.push(randomIndex);
+        currentTopicIndex = randomIndex;
+        document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
+    }
+
+    function showDefinition() {
+        isPaused = true;
+        document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
+        document.getElementById('definition-modal').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+    }
+
+    function closeDefinition() {
+        isPaused = false;
+        document.getElementById('definition-modal').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+    }
+
+    function updateTime() {
+        const timeSelector = document.getElementById('time-selector');
+        timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
+        document.getElementById('selected-time').innerText = timeLeft; // Update display
+    }
+</script>
 </body>
 </html>
