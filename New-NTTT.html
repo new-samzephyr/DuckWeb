@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Time to Think</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        body {
+            font-family: 'Fredoka One', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #000000; /* Changed to black */
+            color: #ffffff;
+            margin: 0;
+        }
+        #banner {
+            width: 80%;
+            max-width: 600px;
+            height: 150px;
+            background-color: #333;
+            margin-bottom: 20px;
+        }
+        #topic {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #61dafb;
+        }
+        #definition-link {
+            font-size: 1em;
+            color: #61dafb;
+            cursor: pointer;
+            text-decoration: underline;
+            display: none;
+        }
+        #definition-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        #definition-modal p {
+            margin: 0 0 20px 0;
+        }
+        #timer {
+            font-size: 4em;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #21a1f1;
+        }
+        #restart {
+            display: none;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div id="banner">
+        <img src="NTTT.png" alt="Banner Image" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    <div id="topic">Press Start to Begin</div>
+    <div id="definition-link" onclick="showDefinition()">What is this?</div>
+    <div id="timer">20</div>
+    
+    <div>
+        <input type="range" id="time-selector" min="10" max="30" step="10" value="20" onchange="updateTime()">
+        <span id="selected-time">20</span> seconds (Recommended)
+    </div>
+    
+    <button id="start-pause" onclick="startPauseGame()">Start</button>
+    <button id="restart" onclick="restartGame()">Restart</button>
+
+    <div id="overlay"></div>
+    <div id="definition-modal">
+        <p id="definition-text"></p>
+        <button onclick="closeDefinition()">Got it</button>
+    </div>
+
+    <script>
+        const topics = [
+            { topic: "Books", definition: "A set of written, printed, or blank pages fastened together along one side and encased between protective covers." },
+            { topic: "Movies", definition: "A form of entertainment that enacts a story by sound and a sequence of images giving the illusion of continuous movement." },
+            { topic: "Social Media", definition: "Websites and applications that enable users to create and share content or to participate in social networking." },
+            { topic: "Music", definition: "The art or science of combining vocal or instrumental sounds (or both) to produce beauty of form, harmony, and expression of emotion." },
+            { topic: "Sports", definition: "All forms of competitive physical activity or games which, through casual or organised participation, aim to use, maintain or improve physical ability and skills while providing enjoyment to participants." },
+            { topic: "Technology", definition: "The application of scientific knowledge for practical purposes, especially in industry." },
+            { topic: "Food", definition: "Any nutritious substance that people or animals eat or drink or that plants absorb in order to maintain life and growth." },
+            { topic: "Travel", definition: "The movement of people between distant geographical locations, either for leisure or for work." },
+            { topic: "Science", definition: "The intellectual and practical activity encompassing the systematic study of the structure and behaviour of the physical and natural world through observation and experiment." },
+            { topic: "History", definition: "The study of past events, particularly in human affairs." },
+            { topic: "Art", definition: "The expression or application of human creative skill and imagination, typically in a visual form such as painting or sculpture, producing works to be appreciated primarily for their beauty or emotional power." },
+            { topic: "Animals", definition: "Multicellular, eukaryotic organisms of the kingdom Animalia (also called Metazoa)." },
+            { topic: "Hobbies", definition: "Activities done regularly in one's leisure time for pleasure." },
+            { topic: "Fashion", definition: "A popular trend, especially in styles of dress and ornament or manners of behavior." },
+            { topic: "Education", definition: "The process of receiving or giving systematic instruction, especially at a school or university." },
+            { topic: "Environment", definition: "The surroundings or conditions in which a person, animal, or plant lives or operates." },
+            { topic: "Health", definition: "The state of being free from illness or injury." },
+            { topic: "News", definition: "Newly received or noteworthy information, especially about recent events." },
+            { topic: "Games", definition: "A form of play or sport, especially a competitive one played according to rules and decided by skill, strength, or luck." },
+            { topic: "Culture", definition: "The arts and other manifestations of human intellectual achievement regarded collectively." },
+            { topic: "Space", definition: "A continuous area or expanse that is free, available, or unoccupied." },
+            { topic: "Dreams", definition: "A series of thoughts, images, and sensations occurring in a person's mind during sleep." },
+            { topic: "Comedy", definition: "Professional entertainment consisting of jokes and satirical sketches, intended to make an audience laugh." },
+            { topic: "Languages", definition: "The method of human communication, either spoken or written, consisting of the use of words in a structured and conventional way." },
+            { topic: "Festivals", definition: "A day or period of celebration, typically for religious reasons." },
+            { topic: "Memes", definition: "A humorous image, video, piece of text, etc., that is copied (often with slight variations) and spread rapidly by Internet users." },
+            { topic: "Nature", definition: "The phenomena of the physical world collectively, including plants, animals, the landscape, and other features and products of the earth, as opposed to humans or human creations." },
+            { topic: "Photography", definition: "The art or practice of taking and processing photographs." },
+            { topic: "Philosophy", definition: "The study of the fundamental nature of knowledge, reality, and existence, especially when considered as an academic discipline." },
+            { topic: "Poetry", definition: "Literary work in which special intensity is given to the expression of feelings and ideas by the use of distinctive style and rhythm; poems collectively or as a genre of literature." },
+            { topic: "Relationships", definition: "The way in which two or more concepts, objects, or people are connected, or the state of being connected." },
+            { topic: "Virtual Reality", definition: "The computer-generated simulation of a three-dimensional image or environment that can be interacted with in a seemingly real or physical way by a person using special electronic equipment." },
+            { topic: "Weather", definition: "The state of the atmosphere at a place and time as regards heat, dryness, sunshine, wind, rain, etc." },
+            { topic: "Economy", definition: "The state of a country or region in terms of the production and consumption of goods and services and the supply of money." },
+            { topic: "Myths", definition: "A traditional story, especially one concerning the early history of a people or explaining some natural or social phenomenon, and typically involving supernatural beings or events." },
+            { topic: "Cooking", definition: "The practice or skill of preparing food by combining, mixing, and heating ingredients." },
+            { topic: "Meditation", definition: "The practice of thinking deeply or focusing one's mind for a period of time, in silence or with the aid of chanting, for religious or spiritual purposes or as a method of relaxation." },
+            { topic: "Fitness", definition: "The condition of being physically fit and healthy." },
+            { topic: "Gardening", definition: "The activity of tending and cultivating a garden, especially as a pastime." },
+            { topic: "Architecture", definition: "The art or practice of designing and constructing buildings." },
+            { topic: "Theatre", definition: "A building or outdoor area in which plays and other dramatic performances are given." },
+            { topic: "Leadership", definition: "The action of leading a group of people or an organization." },
+            { topic: "Podcasts", definition: "A digital audio file made available on the Internet for downloading to a computer or mobile device, typically available as a series, new installments of which can be received by subscribers automatically." },
+            { topic: "Inventions", definition: "The action of inventing something, typically a process or device." },
+            { topic: "Biographies", definition: "An account of someone's life written by someone else." },
+            { topic: "Astrology", definition: "The study of the movements and relative positions of celestial bodies interpreted as having an influence on human affairs and the natural world." },
+            { topic: "Adventure", definition: "An unusual and exciting, typically hazardous, experience or activity." },
+            { topic: "Paranormal", definition: "Denoting events or phenomena such as telekinesis or clairvoyance that are beyond the scope of normal scientific understanding." },
+            { topic: "Astronomy", definition: "The branch of science which deals with celestial objects, space, and the physical universe as a whole." },
+            { topic: "Psychology", definition: "The scientific study of the human mind and its functions, especially those affecting behavior in a given context." },
+            { topic: "Folklore", definition: "The traditional beliefs, customs, and stories of a community, passed through the generations by word of mouth." },
+            { topic: "Marine Life", definition: "The plants, animals, and other organisms that live in the ocean." },
+            { topic: "Robotics", definition: "The branch of technology that deals with the design, construction, operation, and application of robots." },
+            { topic: "Programming", definition: "The process of designing and building an executable computer program to accomplish a specific computing result or to perform a particular task." },
+            { topic: "Innovations", definition: "The action or process of innovating; a new method, idea, product, etc." },
+            { topic: "Celebrities", definition: "A famous person, especially in entertainment or sports." },
+            { topic: "Politics", definition: "The activities associated with the governance of a country or other area, especially the debate between parties having power." },
+            { topic: "Climate Change", definition: "A change in global or regional climate patterns, in particular a change apparent from the mid to late 20th century onwards and attributed largely to the increased levels of atmospheric carbon dioxide produced by the use of fossil fuels." },
+            { topic: "Public Speaking", definition: "The act or process of making speeches in public." },
+            { topic: "Career Goals", definition: "The objectives or milestones individuals aim to achieve in their professional lives." },
+            { topic: "Pet Peeves", definition: "Something that a particular person finds especially annoying." },
+            { topic: "Ethics", definition: "Moral principles that govern a person's behavior or the conducting of an activity." },
+            { topic: "Art History", definition: "The study of objects of art considered within their time period." },
+            { topic: "Magic", definition: "The power of apparently influencing the course of events by using mysterious or supernatural forces." },
+            { topic: "Inspirations", definition: "The process of being mentally stimulated to do or feel something, especially to do something creative." }
+        ];
+
+        let timer;
+        let timeLeft = 20; // Default to 20 seconds
+        let currentTopicIndex = 0;
+        let isPaused = false;
+        let usedTopics = [];
+
+        function updateTimer() {
+            if (isPaused) return;
+            if (timeLeft <= 0) {
+                changeTopic();
+                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+            } else {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+            }
+        }
+
+        function startPauseGame() {
+            const startPauseButton = document.getElementById('start-pause');
+            const definitionLink = document.getElementById('definition-link');
+            if (!timer) {
+                changeTopic();
+                timer = setInterval(updateTimer, 1000);
+                startPauseButton.innerText = 'Pause';
+                document.getElementById('restart').style.display = 'block';
+                definitionLink.style.display = 'block';
+            } else if (isPaused) {
+                isPaused = false;
+                startPauseButton.innerText = 'Pause';
+            } else {
+                isPaused = true;
+                startPauseButton.innerText = 'Continue';
+            }
+        }
+
+        function restartGame() {
+            clearInterval(timer);
+            timer = null;
+            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+            currentTopicIndex = 0;
+            isPaused = false;
+            usedTopics = [];
+            document.getElementById('topic').innerText = 'Press Start to Begin';
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('restart').style.display = 'none';
+            document.getElementById('start-pause').innerText = 'Start';
+            document.getElementById('definition-link').style.display = 'none';
+        }
+
+        function changeTopic() {
+            if (usedTopics.length === topics.length) {
+                usedTopics = []; // Reset if all topics used
+            }
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * topics.length);
+            } while (usedTopics.includes(randomIndex));
+            usedTopics.push(randomIndex);
+            currentTopicIndex = randomIndex;
+            document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
+        }
+
+        function showDefinition() {
+            isPaused = true;
+            document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
+            document.getElementById('definition-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+        }
+
+        function closeDefinition() {
+            isPaused = false;
+            document.getElementById('definition-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+        }
+
+        function updateTime() {
+            const timeSelector = document.getElementById('time-selector');
+            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
+            document.getElementById('selected-time').innerText = timeLeft; // Update display
+        }
+    </script>
+</body>
+</html>
