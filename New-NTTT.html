@@ -206,7 +206,7 @@
                 randomIndex = Math.floor(Math.random() * filteredTopics.length);
             } while (usedTopics.includes(filteredTopics[randomIndex].topic));
             usedTopics.push(filteredTopics[randomIndex].topic);
-            currentTopicIndex = filteredTopics.findIndex(t => t.topic === filteredTopics[randomIndex].topic);
+            currentTopicIndex = topics.findIndex(t => t.topic === filteredTopics[randomIndex].topic);
             document.getElementById('topic').innerText = filteredTopics[randomIndex].topic;
         }
 
@@ -256,9 +256,9 @@
 
         function adjustPlayerLevel() {
             // Example adjustment: Increase level if too many skips
-            if (skippedTopics.length > stayedTopics.length) {
+            if (skippedTopics.length > stayedTopics.length + 1) { // Added margin for balance
                 playerLevel = Math.min(playerLevel + 1, 2); // Increase level, max 2 (advanced)
-            } else {
+            } else if (skippedTopics.length < stayedTopics.length) {
                 playerLevel = Math.max(playerLevel - 1, 0); // Decrease level, min 0 (beginner)
             }
         }
