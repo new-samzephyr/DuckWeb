@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #000000; /* Changed to black */
+            background-color: #000000;
             color: #ffffff;
             margin: 0;
         }
@@ -86,8 +86,8 @@
         }
         .button-container {
             display: flex;
-            gap: 10px; /* Space between buttons */
-            margin-top: 20px; /* Adjust this value to move buttons further down */
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -123,6 +123,9 @@
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
+        let skippedTopics = [];
+        let stayedTopics = [];
+        let playerLevel = 0; // 0 for beginner, 1 for intermediate, 2 for advanced
 
         // Fetch topics from JSON file
         fetch('NTTT-Topics.json')
@@ -174,6 +177,8 @@
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
+            skippedTopics = [];
+            stayedTopics = [];
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
             document.getElementById('restart').style.display = 'none';
@@ -187,13 +192,37 @@
             if (usedTopics.length === topics.length) {
                 usedTopics = []; // Reset if all topics used
             }
+
+            // Determine the level of topics based on player's performance
+            let filteredTopics = filterTopicsByLevel();
+
+            if (filteredTopics.length === 0) {
+                // Fallback if no topics available for current level
+                filteredTopics = topics;
+            }
+
             let randomIndex;
             do {
-                randomIndex = Math.floor(Math.random() * topics.length);
-            } while (usedTopics.includes(randomIndex));
-            usedTopics.push(randomIndex);
-            currentTopicIndex = randomIndex;
+                randomIndex = Math.floor(Math.random() * filteredTopics.length);
+            } while (usedTopics.includes(filteredTopics[randomIndex].index));
+            usedTopics.push(filteredTopics[randomIndex].index);
+            currentTopicIndex = filteredTopics[randomIndex].index;
             document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
+        }
+
+        function filterTopicsByLevel() {
+            // Example filtering logic: Adjust based on performance
+            if (playerLevel === 0) {
+                // Beginner level: show easier topics
+                return topics.filter(t => t.difficulty === 'easy');
+            } else if (playerLevel === 1) {
+                // Intermediate level: show medium topics
+                return topics.filter(t => t.difficulty === 'medium');
+            } else if (playerLevel === 2) {
+                // Advanced level: show harder topics
+                return topics.filter(t => t.difficulty === 'hard');
+            }
+            return [];
         }
 
         function showDefinition() {
@@ -218,9 +247,20 @@
         }
 
         function skipTopic() {
+            skippedTopics.push(currentTopicIndex);
             changeTopic(); // Change to a new topic
             timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
             document.getElementById('timer').innerText = timeLeft;
+            adjustPlayerLevel(); // Adjust the player level based on skipped topics
+        }
+
+        function adjustPlayerLevel() {
+            // Example adjustment: Increase level if too many skips
+            if (skippedTopics.length > stayedTopics.length) {
+                playerLevel = Math.min(playerLevel + 1, 2); // Increase level, max 2 (advanced)
+            } else {
+                playerLevel = Math.max(playerLevel - 1, 0); // Decrease level, min 0 (beginner)
+            }
         }
     </script>
 </body>
