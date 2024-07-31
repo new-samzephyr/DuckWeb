@@ -5,68 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Time to Think</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
+            font-family: 'Fredoka One', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #000000; /* Changed to black */
+            color: #ffffff;
+            margin: 0;
         }
-        #banner img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
+        #banner {
+            width: 80%;
+            max-width: 600px;
+            height: 150px;
+            background-color: #333;
+            margin-bottom: 20px;
         }
         #topic {
-            font-size: 24px;
-            margin: 20px;
+            font-size: 2em;
+            margin: 20px 0;
+            color: #61dafb;
+        }
+        #definition-link {
+            font-size: 1em;
+            color: #61dafb;
+            cursor: pointer;
+            text-decoration: underline;
+            display: none;
+        }
+        #definition-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        #definition-modal p {
+            margin: 0 0 20px 0;
         }
         #timer {
-            font-size: 20px;
-            margin: 20px;
+            font-size: 4em;
+            margin: 10px 0;
+            font-weight: bold;
         }
         button {
+            padding: 10px 20px;
+            font-size: 1em;
             margin: 5px;
-            padding: 10px 15px;
-            font-size: 16px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+            transition: background-color 0.3s;
         }
-        input[type="range"] {
-            width: 300px;
+        button:hover {
+            background-color: #21a1f1;
+        }
+        #restart {
+            display: none;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
     <div id="banner">
-        <img src="NTTT.png" alt="Banner Image">
+        <img src="NTTT.png" alt="Banner Image" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
     <div id="topic">Press Start to Begin</div>
-    <div id="timer">20</div>
-    
-    <div>
-        <input type="range" id="time-selector" min="10" max="30" step="10" value="20" onchange="updateTime()">
-        <span id="selected-time">20</span> seconds (Recommended)
-    </div>
-    
+    <div id="definition-link" onclick="showDefinition()">What is this?</div>
+    <div id="timer">15</div>
     <button id="start-pause" onclick="startPauseGame()">Start</button>
     <button id="skip" onclick="skipTopic()">Skip</button>
     <button id="restart" onclick="restartGame()">Restart</button>
 
+    <div id="overlay"></div>
+    <div id="definition-modal">
+        <p id="definition-text"></p>
+        <button onclick="closeDefinition()">Got it</button>
+    </div>
+
     <script>
-        let topics = {};
+        let topics = [];
         let timer;
-        let timeLeft = 20; // Default to 20 seconds
+        let timeLeft = 15; // 15 seconds
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
-        let skippedTopics = [];
-        let engagementCount = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
-        let currentLevel = 'A1'; // Start with the easiest level
 
-        // Fetch topics from JSON file
+        // Fetch topics from the JSON file
         fetch('NTTT-Topics.json')
             .then(response => response.json())
             .then(data => {
-                topics = data;
-                changeTopic(); // Start with the first topic
+                topics = data; // Assign the fetched topics
             })
             .catch(error => console.error('Error fetching topics:', error));
 
@@ -74,7 +123,7 @@
             if (isPaused) return;
             if (timeLeft <= 0) {
                 changeTopic();
-                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+                timeLeft = 15; // reset to 15 seconds
             } else {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
@@ -83,9 +132,13 @@
 
         function startPauseGame() {
             const startPauseButton = document.getElementById('start-pause');
+            const definitionLink = document.getElementById('definition-link');
             if (!timer) {
+                changeTopic();
                 timer = setInterval(updateTimer, 1000);
                 startPauseButton.innerText = 'Pause';
+                document.getElementById('restart').style.display = 'block';
+                definitionLink.style.display = 'block';
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -98,60 +151,47 @@
         function restartGame() {
             clearInterval(timer);
             timer = null;
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+            timeLeft = 15;
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
-            skippedTopics = [];
-            engagementCount = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('restart').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
+            document.getElementById('definition-link').style.display = 'none';
         }
 
         function changeTopic() {
-            const levelTopics = topics[currentLevel];
-            if (usedTopics.length === levelTopics.length) {
+            if (usedTopics.length === topics.length) {
                 usedTopics = []; // Reset if all topics used
             }
             let randomIndex;
             do {
-                randomIndex = Math.floor(Math.random() * levelTopics.length);
+                randomIndex = Math.floor(Math.random() * topics.length);
             } while (usedTopics.includes(randomIndex));
             usedTopics.push(randomIndex);
             currentTopicIndex = randomIndex;
-            document.getElementById('topic').innerText = levelTopics[currentTopicIndex].topic;
+            document.getElementById('topic').innerText = topics[currentTopicIndex].topic;
         }
 
         function skipTopic() {
-            const levelTopics = topics[currentLevel];
-            skippedTopics.push(levelTopics[currentTopicIndex].topic);
-            adjustLevel('skip');
             changeTopic(); // Change to the next topic
         }
 
-        function adjustLevel(action) {
-            const levelTopics = topics[currentLevel];
-            if (action === 'skip') {
-                engagementCount[currentLevel]--;
-            } else {
-                engagementCount[currentLevel]++;
-            }
-
-            // Logic to adjust level based on engagement count
-            if (engagementCount[currentLevel] < -2) {
-                if (currentLevel === 'A1') return; // Already at the lowest level
-                currentLevel = String.fromCharCode(currentLevel.charCodeAt(0) + 1); // Move to the next level
-            } else if (engagementCount[currentLevel] > 2) {
-                if (currentLevel === 'C2') return; // Already at the highest level
-                currentLevel = String.fromCharCode(currentLevel.charCodeAt(0) - 1); // Move to the previous level
-            }
+        function showDefinition() {
+            isPaused = true;
+            document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
+            document.getElementById('definition-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
         }
 
-        function updateTime() {
-            const timeSelector = document.getElementById('time-selector');
-            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
-            document.getElementById('selected-time').innerText = timeLeft; // Update display
+        function closeDefinition() {
+            isPaused = false;
+            document.getElementById('definition-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
         }
     </script>
 </body>
