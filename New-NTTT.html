@@ -3,131 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic Quiz</title>
+    <title>No Time to Think</title>
     <style>
-        #definition-modal, #overlay {
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        body {
+            font-family: 'Fredoka One', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+        }
+        #banner {
+            width: 80%;
+            max-width: 600px;
+            height: 150px;
+            background-color: #333;
+            margin-bottom: 20px;
+        }
+        #topic {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #61dafb;
+        }
+        #definition-link {
+            font-size: 1em;
+            color: #61dafb;
+            cursor: pointer;
+            text-decoration: underline;
+            display: none;
+        }
+        #definition-modal {
             display: none;
             position: fixed;
-            left: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        #definition-modal p {
+            margin: 0 0 20px 0;
+        }
+        #timer {
+            font-size: 4em;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #21a1f1;
+        }
+        #restart, #skip {
+            display: none;
+        }
+        #overlay {
+            position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
-        #definition-content {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        #definition-text {
-            margin-bottom: 20px;
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Topic Quiz</h1>
-    <div id="timer">Time Left: <span id="selected-time">30</span> seconds</div>
-    <button id="start-pause">Pause</button>
-    <button id="skip-topic">Skip</button>
-    <button id="answer-topic">Answer</button>
-    <div id="time-selector-container">
-        <label for="time-selector">Set Time:</label>
-        <input type="range" id="time-selector" min="10" max="120" step="10" value="30">
+    <div id="banner">
+        <img src="NTTT.png" alt="Banner Image" style="width: 100%; height: 100%; object-fit: cover;">
     </div>
-    <div id="definition-modal">
-        <div id="definition-content">
-            <p id="definition-text"></p>
-            <button onclick="closeDefinition()">Close</button>
-        </div>
+    <div id="topic">Press Start to Begin</div>
+    <div id="definition-link" onclick="showDefinition()">What is this?</div>
+    <div id="timer">20</div>
+    
+    <div>
+        <input type="range" id="time-selector" min="10" max="30" step="10" value="20" onchange="updateTime()">
+        <span id="selected-time">20</span> seconds (Recommended)
     </div>
+    
+    <div class="button-container">
+        <button id="start-pause" onclick="startPauseGame()">Start</button>
+        <button id="restart" onclick="restartGame()">Restart</button>
+        <button id="skip" onclick="skipTopic()">Skip</button>
+    </div>
+
     <div id="overlay"></div>
+    <div id="definition-modal">
+        <p id="definition-text"></p>
+        <button onclick="closeDefinition()">Got it</button>
+    </div>
 
     <script>
         let topics = [];
+        let timer;
+        let timeLeft = 20; // Default to 20 seconds
         let currentTopicIndex = 0;
         let isPaused = false;
-        let timeLeft = 30;
-        let difficultyLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-        let completedTopics = {
-            'A1': 0, 'A2': 0, 'B1': 0, 'B2': 0, 'C1': 0, 'C2': 0
-        };
+        let usedTopics = [];
         let skippedTopics = [];
-        let playerLevel = 'A1'; // Starting difficulty level
+        let completedTopics = {
+            'A': 0,
+            'B': 0,
+            'C': 0
+        };
+        let playerLevel = 'B'; // Default to B level
 
-        // Load topics from JSON
-        fetch('topics.json')
+        // Fetch topics from JSON file
+        fetch('NTTT-Topics.json')
             .then(response => response.json())
             .then(data => {
-                for (const level of difficultyLevels) {
-                    topics = topics.concat(data[level].map(topic => ({ ...topic, difficulty: level })));
-                }
-                startQuiz();
-            });
+                // Adjust this if your JSON structure is different
+                topics = Object.values(data).flat();
+                console.log('Topics loaded:', topics); // Debugging line
+            })
+            .catch(error => console.error('Error fetching topics:', error));
 
-        function startQuiz() {
-            changeTopic();
-            document.getElementById('time-selector').addEventListener('input', updateTime);
-            document.getElementById('start-pause').addEventListener('click', togglePause);
-            document.getElementById('skip-topic').addEventListener('click', skipTopic);
-            document.getElementById('answer-topic').addEventListener('click', answerTopic);
-            updateTime();
-            startTimer();
+        function updateTimer() {
+            if (isPaused) return;
+            if (timeLeft <= 0) {
+                changeTopic();
+                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+            } else {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+            }
         }
 
-        function startTimer() {
-            setInterval(() => {
-                if (!isPaused && timeLeft > 0) {
-                    timeLeft--;
-                    document.getElementById('timer').innerText = `Time Left: ${timeLeft} seconds`;
-                }
-            }, 1000);
+        function startPauseGame() {
+            const startPauseButton = document.getElementById('start-pause');
+            const definitionLink = document.getElementById('definition-link');
+            const timeSelector = document.getElementById('time-selector');
+
+            if (!timer) {
+                changeTopic();
+                timer = setInterval(updateTimer, 1000);
+                startPauseButton.innerText = 'Pause';
+                document.getElementById('restart').style.display = 'block';
+                document.getElementById('skip').style.display = 'block'; // Show skip button
+                definitionLink.style.display = 'block';
+                timeSelector.disabled = true; // Disable the time selector
+            } else if (isPaused) {
+                isPaused = false;
+                startPauseButton.innerText = 'Pause';
+            } else {
+                isPaused = true;
+                startPauseButton.innerText = 'Continue';
+            }
+        }
+
+        function restartGame() {
+            clearInterval(timer);
+            timer = null;
+            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+            currentTopicIndex = 0;
+            isPaused = false;
+            usedTopics = [];
+            skippedTopics = [];
+            completedTopics = {
+                'A': 0,
+                'B': 0,
+                'C': 0
+            };
+            document.getElementById('topic').innerText = 'Press Start to Begin';
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('restart').style.display = 'none';
+            document.getElementById('skip').style.display = 'none'; // Hide skip button
+            document.getElementById('start-pause').innerText = 'Start';
+            document.getElementById('definition-link').style.display = 'none';
+            document.getElementById('time-selector').disabled = false; // Enable the time selector
         }
 
         function changeTopic() {
-            if (topics.length === 0) return;
-
-            // Filter topics based on current difficulty and completed topics
-            let availableTopics = getAvailableTopics(playerLevel);
-
-            if (availableTopics.length === 0) {
-                alert('No more topics available at this level.');
-                return;
+            if (usedTopics.length === topics.length) {
+                usedTopics = []; // Reset if all topics used
             }
 
-            currentTopicIndex = Math.floor(Math.random() * availableTopics.length);
-            document.getElementById('timer').innerText = `Time Left: ${timeLeft} seconds`;
+            let filteredTopics = filterTopicsByLevel();
 
-            showTopic(availableTopics[currentTopicIndex]);
-        }
-
-        function showTopic(topic) {
-            document.body.innerHTML += `<h2>${topic.topic}</h2>`;
-            document.body.innerHTML += `<button onclick="showDefinition()">Show Definition</button>`;
-        }
-
-        function getAvailableTopics(currentLevel) {
-            let levelIndex = difficultyLevels.indexOf(currentLevel);
-            let currentGroup = difficultyLevels.slice(0, levelIndex + 1);
-            let availableTopics = [];
-
-            for (const level of currentGroup) {
-                availableTopics = availableTopics.concat(topics.filter(t => t.difficulty === level));
+            if (filteredTopics.length === 0) {
+                // Fallback if no topics available for current level
+                filteredTopics = topics;
             }
 
-            return availableTopics.filter(t => completedTopics[t.difficulty] < 5); // Example: show topics not completed 5 times
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * filteredTopics.length);
+            } while (usedTopics.includes(filteredTopics[randomIndex].topic));
+            usedTopics.push(filteredTopics[randomIndex].topic);
+            currentTopicIndex = topics.findIndex(t => t.topic === filteredTopics[randomIndex].topic);
+            document.getElementById('topic').innerText = filteredTopics[randomIndex].topic;
         }
 
-        function updateTime() {
-            const timeSelector = document.getElementById('time-selector');
-            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
-            document.getElementById('selected-time').innerText = timeLeft; // Update display
+        function filterTopicsByLevel() {
+            const difficultyGroups = {
+                'A': ['A1', 'A2'],
+                'B': ['B1', 'B2'],
+                'C': ['C1', 'C2']
+            };
+
+            // Determine current difficulty group
+            const currentGroup = Object.keys(difficultyGroups).find(group =>
+                difficultyGroups[group].includes(playerLevel)
+            );
+
+            // Count skips by difficulty group
+            const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
+                acc[group] = skippedTopics.filter(t => difficultyGroups[group].includes(t.difficulty)).length;
+                return acc;
+            }, {});
+
+            // Adjust level based on skipped topics
+            if (skipsByGroup[currentGroup] >= 3) {
+                // Show easier topics if too many of current level are skipped
+                const easierGroup = getEasierGroup(currentGroup);
+                if (easierGroup) {
+                    return topics.filter(t => difficultyGroups[easierGroup].includes(t.difficulty));
+                }
+            }
+
+            // Increase difficulty if too many topics answered from current group
+            if (completedTopics[currentGroup] >= 2) {
+                const harderGroup = getHarderGroup(currentGroup);
+                if (harderGroup) {
+                    return topics.filter(t => difficultyGroups[harderGroup].includes(t.difficulty));
+                }
+            }
+
+            return topics.filter(t => difficultyGroups[currentGroup].includes(t.difficulty));
         }
 
-        function togglePause() {
-            isPaused = !isPaused;
-            document.getElementById('start-pause').innerText = isPaused ? 'Continue' : 'Pause';
+        function getEasierGroup(currentGroup) {
+            const groups = { 'A': 'B', 'B': 'C', 'C': null };
+            return groups[currentGroup];
+        }
+
+        function getHarderGroup(currentGroup) {
+            const groups = { 'A': 'B', 'B': 'C', 'C': null };
+            return Object.keys(groups).find(group => groups[group] === currentGroup);
         }
 
         function showDefinition() {
@@ -145,21 +280,28 @@
             document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
         }
 
+        function updateTime() {
+            const timeSelector = document.getElementById('time-selector');
+            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
+            document.getElementById('selected-time').innerText = timeLeft; // Update display
+        }
+
         function skipTopic() {
             const skippedTopic = topics[currentTopicIndex];
             skippedTopics.push(skippedTopic);
             changeTopic(); // Change to a new topic
             timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
-            document.getElementById('timer').innerText = `Time Left: ${timeLeft} seconds`;
+            document.getElementById('timer').innerText = timeLeft;
+            completedTopics[playerLevel] = 0; // Reset completed topic count for current difficulty
         }
 
         function answerTopic() {
             // Called when a topic is correctly answered
             const currentTopic = topics[currentTopicIndex];
-            completedTopics[currentTopic.difficulty] = (completedTopics[currentTopic.difficulty] || 0) + 1;
+            completedTopics[currentTopic.difficultyGroup] = (completedTopics[currentTopic.difficultyGroup] || 0) + 1;
             changeTopic(); // Change to a new topic
             timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
-            document.getElementById('timer').innerText = `Time Left: ${timeLeft} seconds`;
+            document.getElementById('timer').innerText = timeLeft;
         }
     </script>
 </body>
