@@ -71,7 +71,7 @@
         button:hover {
             background-color: #21a1f1;
         }
-        #restart {
+        #restart, #skip {
             display: none;
         }
         #overlay {
@@ -101,6 +101,7 @@
     
     <button id="start-pause" onclick="startPauseGame()">Start</button>
     <button id="restart" onclick="restartGame()">Restart</button>
+    <button id="skip" onclick="skipTopic()">Skip</button>
 
     <div id="overlay"></div>
     <div id="definition-modal">
@@ -147,6 +148,7 @@
                 timer = setInterval(updateTimer, 1000);
                 startPauseButton.innerText = 'Pause';
                 document.getElementById('restart').style.display = 'block';
+                document.getElementById('skip').style.display = 'block'; // Show skip button
                 definitionLink.style.display = 'block';
                 timeSelector.disabled = true; // Disable the time selector
             } else if (isPaused) {
@@ -168,6 +170,7 @@
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
             document.getElementById('restart').style.display = 'none';
+            document.getElementById('skip').style.display = 'none'; // Hide skip button
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
             document.getElementById('time-selector').disabled = false; // Enable the time selector
@@ -205,6 +208,12 @@
             const timeSelector = document.getElementById('time-selector');
             timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
             document.getElementById('selected-time').innerText = timeLeft; // Update display
+        }
+
+        function skipTopic() {
+            changeTopic(); // Change to a new topic
+            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
+            document.getElementById('timer').innerText = timeLeft;
         }
     </script>
 </body>
