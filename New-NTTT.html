@@ -124,7 +124,7 @@
         let isPaused = false;
         let usedTopics = [];
         let skippedTopics = [];
-        let playerLevel = 'B2'; // Default to B2 level
+        let playerLevel = 'B'; // Default to B level
 
         // Fetch topics from JSON file
         fetch('NTTT-Topics.json')
@@ -208,18 +208,40 @@
         }
 
         function filterTopicsByLevel() {
-            // Adjust the level based on skipped topics
-            if (skippedTopics.filter(t => t.difficulty === playerLevel).length >= 4) {
+            const difficultyGroups = {
+                'A': ['A1', 'A2'],
+                'B': ['B1', 'B2'],
+                'C': ['C1', 'C2']
+            };
+
+            // Determine current difficulty group
+            const currentGroup = Object.keys(difficultyGroups).find(group =>
+                difficultyGroups[group].includes(playerLevel)
+            );
+
+            // Count skips by difficulty group
+            const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
+                acc[group] = skippedTopics.filter(t => difficultyGroups[group].includes(t.difficulty)).length;
+                return acc;
+            }, {});
+
+            // Adjust level based on skipped topics
+            if (skipsByGroup[currentGroup] >= 3) {
                 // Show easier topics if too many of current level are skipped
-                return topics.filter(t => getDifficultyLevel(t.difficulty) < getDifficultyLevel(playerLevel));
+                const easierGroup = getEasierGroup(currentGroup);
+                if (easierGroup) {
+                    return topics.filter(t => difficultyGroups[easierGroup].includes(t.difficulty));
+                }
             }
-            // Otherwise, show topics of the current difficulty level
-            return topics.filter(t => t.difficulty === playerLevel);
+
+            // Otherwise, show topics of the current difficulty group
+            return topics.filter(t => difficultyGroups[currentGroup].includes(t.difficulty));
         }
 
-        function getDifficultyLevel(level) {
-            const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-            return levels.indexOf(level);
+        function getEasierGroup(currentGroup) {
+            const groups = ['C', 'B', 'A'];
+            const currentIndex = groups.indexOf(currentGroup);
+            return currentIndex < groups.length - 1 ? groups[currentIndex + 1] : null;
         }
 
         function showDefinition() {
@@ -244,11 +266,11 @@
         }
 
         function skipTopic() {
-            skippedTopics.push(topics[currentTopicIndex]);
+            const skippedTopic = topics[currentTopicIndex];
+            skippedTopics.push(skippedTopic);
             changeTopic(); // Change to a new topic
             timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
             document.getElementById('timer').innerText = timeLeft;
-            // Adjust the player level based on skipped topics
         }
     </script>
 </body>
