@@ -140,12 +140,15 @@
         function startPauseGame() {
             const startPauseButton = document.getElementById('start-pause');
             const definitionLink = document.getElementById('definition-link');
+            const timeSelector = document.getElementById('time-selector');
+
             if (!timer) {
                 changeTopic();
                 timer = setInterval(updateTimer, 1000);
                 startPauseButton.innerText = 'Pause';
                 document.getElementById('restart').style.display = 'block';
                 definitionLink.style.display = 'block';
+                timeSelector.disabled = true; // Disable the time selector
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -167,6 +170,7 @@
             document.getElementById('restart').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
+            document.getElementById('time-selector').disabled = false; // Enable the time selector
         }
 
         function changeTopic() {
