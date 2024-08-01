@@ -90,6 +90,11 @@
         #slider-container {
             margin-top: 20px; /* Added margin for spacing */
         }
+        /* New styles for button container */
+        #button-container {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -105,9 +110,12 @@
     </div>
     
     <div id="timer">20</div> <!-- Default timer set to 20 seconds -->
-    <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
-    <button id="skip" aria-label="Skip the current topic" onclick="skipTopic()">Skip</button>
-    <button id="restart" aria-label="Restart the game" onclick="restartGame()">Restart</button>
+    
+    <div id="button-container">
+        <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
+        <button id="skip" aria-label="Skip the current topic" onclick="skipTopic()" style="display: none;">Skip</button>
+        <button id="restart" aria-label="Restart the game" onclick="restartGame()">Restart</button>
+    </div>
 
     <div id="overlay"></div>
     <div id="definition-modal">
@@ -174,6 +182,7 @@
             const startPauseButton = document.getElementById('start-pause');
             const definitionLink = document.getElementById('definition-link');
             const timerSlider = document.getElementById('timer-slider');
+            const skipButton = document.getElementById('skip');
 
             if (!timer) {
                 if (topics.C.length === 0 && topics.B.length === 0 && topics.A.length === 0) {
@@ -186,6 +195,7 @@
                 document.getElementById('restart').style.display = 'block';
                 definitionLink.style.display = 'block';
                 timerSlider.disabled = true; // Disable the slider
+                skipButton.style.display = 'inline'; // Show the skip button
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -240,6 +250,7 @@
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
             document.getElementById('timer-slider').disabled = false; // Re-enable the slider
+            document.getElementById('skip').style.display = 'none'; // Hide the skip button
         }
 
         function changeTopic() {
