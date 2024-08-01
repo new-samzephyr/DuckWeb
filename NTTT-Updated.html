@@ -144,8 +144,8 @@
                         for (let i = 0; i < topicElements.length; i++) {
                             const name = topicElements[i].getElementsByTagName('name')[0].textContent;
                             const definition = topicElements[i].getElementsByTagName('definition')[0].textContent;
-                            const difficulty = topicElements[i].getElementsByTagName('difficulty')[0].textContent; // Assuming difficulty is defined in XML
-                            topics[difficulty].push({ topic: name, definition: definition });
+                            const difficulty = topicElements[i].getAttribute('difficulty'); // Get difficulty from attribute
+                            topics[difficulty].push({ topic: name, definition: definition, difficulty: difficulty });
                         }
                         console.log('Topics loaded:', topics); // Log loaded topics
                     } else {
@@ -211,19 +211,17 @@
         function adjustDifficulty(currentDifficulty) {
             if (currentDifficulty === 'C') {
                 // If skipped 2 from C, switch to A and B
-                currentDifficulty = 'A'; // Change to easier
                 skips.C = 0; // Reset skips for C
             } else if (currentDifficulty === 'A') {
                 // If not skipped 2 from A, switch back to B and C
-                currentDifficulty = 'B'; // Change to harder
                 skips.A = 0; // Reset skips for A
             }
         }
 
         function getCurrentDifficulty() {
             if (usedTopics.length > 0) {
-                const topic = topics[usedTopics[usedTopics.length - 1].difficulty];
-                return topic.difficulty;
+                const lastUsedIndex = usedTopics[usedTopics.length - 1];
+                return topics[lastUsedIndex.difficulty][lastUsedIndex.index].difficulty;
             }
             return 'C'; // Default to hardest if no topics used
         }
@@ -265,7 +263,7 @@
             do {
                 randomIndex = Math.floor(Math.random() * availableTopics.length);
             } while (usedTopics.includes(randomIndex));
-            usedTopics.push(randomIndex);
+            usedTopics.push({ index: randomIndex, difficulty: currentDifficulty }); // Store both index and difficulty
             currentTopicIndex = randomIndex;
             document.getElementById('topic').innerText = availableTopics[currentTopicIndex].topic;
         }
