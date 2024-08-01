@@ -150,6 +150,8 @@
         function startPauseGame() {
             const startPauseButton = document.getElementById('start-pause');
             const definitionLink = document.getElementById('definition-link');
+            const timerSlider = document.getElementById('timer-slider');
+
             if (!timer) {
                 if (topics.length === 0) {
                     alert('No topics loaded. Please check the XML file.');
@@ -160,6 +162,7 @@
                 startPauseButton.innerText = 'Pause';
                 document.getElementById('restart').style.display = 'block';
                 definitionLink.style.display = 'block';
+                timerSlider.disabled = true; // Disable the slider
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -181,6 +184,7 @@
             document.getElementById('restart').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
+            document.getElementById('timer-slider').disabled = false; // Re-enable the slider
         }
 
         function changeTopic() {
