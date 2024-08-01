@@ -151,8 +151,6 @@
             "difficulty": "A1"
         }
     ]
-}
-{
     "A2": [
         {
             "topic": "Literature",
@@ -285,8 +283,6 @@
             "difficulty": "A2"
         }
     ]
-}
-{
     "B1": [
         {
             "topic": "Education",
@@ -419,8 +415,6 @@
             "difficulty": "B1"
         }
     ]
-}
-{
     "B2": [
         {
             "topic": "Science",
@@ -548,8 +542,6 @@
             "difficulty": "B2"
         }
     ]
-}
-{
     "C1": [
         {
             "topic": "Philosophy",
@@ -692,8 +684,6 @@
             "difficulty": "C1"
         }
     ]
-}
-{
     "C2": [
         {
             "topic": "Innovation",
