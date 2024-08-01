@@ -291,19 +291,21 @@
             if (usedTopics.length === availableTopics.length) {
                 usedTopics = []; // Reset if all topics used
             }
+            
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * availableTopics.length);
-            } while (usedTopics.includes(randomIndex));
-            usedTopics.push({ index: randomIndex, difficulty: currentDifficulty }); // Store both index and difficulty
+            } while (usedTopics.includes(availableTopics[randomIndex].topic));
+            
+            usedTopics.push(availableTopics[randomIndex]); // Store the actual topic object
             currentTopicIndex = randomIndex;
             document.getElementById('topic').innerText = availableTopics[currentTopicIndex].topic;
         }
 
         function showDefinition() {
             isPaused = true;
-            const currentTopic = topics[getCurrentDifficulty()][currentTopicIndex];
-            document.getElementById('definition-text').innerText = currentTopic.definition;
+            const currentTopic = usedTopics[usedTopics.length - 1]; // Get the last used topic
+            document.getElementById('definition-text').innerText = currentTopic.definition; // Use the topic object directly
             document.getElementById('definition-modal').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
