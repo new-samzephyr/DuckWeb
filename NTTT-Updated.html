@@ -118,10 +118,10 @@
         let usedTopics = [];
         let topics = [];
 
-        // Load topics from XML file
+        // Load topics from Topics.xml file
         function loadTopics() {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'topics.xml', true); // Ensure the path is correct
+            xhr.open('GET', 'Topics.xml', true); // Ensure the path is correct
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -139,7 +139,7 @@
                 }
             };
             xhr.onerror = function () {
-                alert('An error occurred while loading topics. Please try again later.');
+                alert('An error occurred while loading topics. Please check the file path and try again.');
             };
             xhr.send();
         }
