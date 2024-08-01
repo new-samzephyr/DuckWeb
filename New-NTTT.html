@@ -229,9 +229,14 @@ function filterTopicsByLevel() {
         difficultyGroups[group].includes(playerLevel)
     );
 
+    if (!currentGroup) {
+        console.error('Current group not found for level:', playerLevel);
+        return [];
+    }
+
     // Count skips by difficulty group
     const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
-        acc[group] = skippedTopics.filter(t => difficultyGroups[group].includes(t.difficulty)).length;
+        acc[group] = skippedTopics.filter(t => difficultyGroups[group] && difficultyGroups[group].includes(t.difficulty)).length;
         return acc;
     }, {});
 
@@ -240,7 +245,7 @@ function filterTopicsByLevel() {
         // Show easier topics if too many of current level are skipped
         const easierGroup = getEasierGroup(currentGroup);
         if (easierGroup) {
-            return topics.filter(t => difficultyGroups[easierGroup].includes(t.difficulty));
+            return topics.filter(t => difficultyGroups[easierGroup] && difficultyGroups[easierGroup].includes(t.difficulty));
         }
     }
 
@@ -248,11 +253,11 @@ function filterTopicsByLevel() {
     if (completedTopics[currentGroup] >= 2) {
         const harderGroup = getHarderGroup(currentGroup);
         if (harderGroup) {
-            return topics.filter(t => difficultyGroups[harderGroup].includes(t.difficulty));
+            return topics.filter(t => difficultyGroups[harderGroup] && difficultyGroups[harderGroup].includes(t.difficulty));
         }
     }
 
-    return topics.filter(t => difficultyGroups[currentGroup].includes(t.difficulty));
+    return topics.filter(t => difficultyGroups[currentGroup] && difficultyGroups[currentGroup].includes(t.difficulty));
 }
 
 function getEasierGroup(currentGroup) {
