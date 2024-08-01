@@ -302,10 +302,15 @@
         function showDefinition() {
             isPaused = true;
             const currentTopic = topics[getCurrentDifficulty()][currentTopicIndex];
-            document.getElementById('definition-text').innerText = currentTopic.definition;
-            document.getElementById('definition-modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+            console.log('Current Topic:', currentTopic); // Log the current topic for debugging
+            if (currentTopic) {
+                document.getElementById('definition-text').innerText = currentTopic.definition; // Set the definition text
+                document.getElementById('definition-modal').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+            } else {
+                alert('No definition available for this topic.');
+            }
         }
 
         function closeDefinition() {
