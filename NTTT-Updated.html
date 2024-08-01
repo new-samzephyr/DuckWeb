@@ -106,6 +106,7 @@
     
     <div id="timer">30</div>
     <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
+    <button id="skip" aria-label="Skip the current topic" onclick="skipTopic()">Skip</button>
     <button id="restart" aria-label="Restart the game" onclick="restartGame()">Restart</button>
 
     <div id="overlay"></div>
@@ -182,6 +183,10 @@
                 isPaused = true;
                 startPauseButton.innerText = 'Continue';
             }
+        }
+
+        function skipTopic() {
+            changeTopic(); // Skip to the next topic
         }
 
         function restartGame() {
