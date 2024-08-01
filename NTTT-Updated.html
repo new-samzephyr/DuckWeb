@@ -186,6 +186,8 @@
         }
 
         function skipTopic() {
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset timer
+            document.getElementById('timer').innerText = timeLeft; // Update displayed timer
             changeTopic(); // Skip to the next topic
         }
 
