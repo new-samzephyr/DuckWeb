@@ -96,12 +96,11 @@
     <div id="topic">Press Start to Begin</div>
     
     <div>
-        <label for="timer-slider">Set Timer:</label>
-        <input type="range" id="timer-slider" min="0" max="2" value="1" step="1" onchange="setTimer()" style="width: 150px;">
+        <input type="range" id="timer-slider" min="1" max="3" value="2" step="1" onchange="setTimer()" style="width: 150px;">
     </div>
     
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
-    <div id="timer">20</div>
+    <div id="timer">30</div>
     <button id="start-pause" onclick="startPauseGame()">Start</button>
     <button id="restart" onclick="restartGame()">Restart</button>
 
@@ -181,7 +180,7 @@
         ];
 
         let timer;
-        let timeLeft = 20; // Default to 20 seconds
+        let timeLeft = 30; // Default to 30 seconds
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
@@ -259,7 +258,7 @@
 
         function setTimer() {
             const timerSlider = document.getElementById('timer-slider');
-            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (0, 1, or 2)
+            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (1, 2, or 3)
             document.getElementById('timer').innerText = timeLeft; // Update displayed timer
         }
     </script>
