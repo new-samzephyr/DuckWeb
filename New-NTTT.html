@@ -135,7 +135,7 @@ let playerLevel = 'B'; // Default to B level
 fetch('NTTT-Topics.json')
     .then(response => response.json())
     .then(data => {
-        // Flatten the nested JSON into a single array of topics
+        // Flatten the JSON structure
         topics = Object.values(data).flat();
         console.log('Topics loaded:', topics); // Debugging line
     })
