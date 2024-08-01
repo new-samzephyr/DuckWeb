@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topics>
+    <topic difficulty="A">
+        <name>Animals</name>
+        <definition>Living creatures like dogs, cats, and birds.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Food</name>
+        <definition>Things we eat or drink to stay healthy, like fruits and vegetables.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Colors</name>
+        <definition>Different shades we see, like red, blue, and green.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Family</name>
+        <definition>People related to you, like parents, siblings, and children.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Weather</name>
+        <definition>The state of the air outside, such as sunny, rainy, or windy.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Pets</name>
+        <definition>Animals we keep at home for fun, like dogs or cats.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Gardening</name>
+        <definition>Growing plants and flowers in your yard or garden.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Music Genres</name>
+        <definition>Different types of music, like pop, rock, or jazz.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>School</name>
+        <definition>A place where children go to learn new things.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Holidays</name>
+        <definition>Special days or times when people celebrate or take a break from work.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Transportation</name>
+        <definition>Ways to travel from one place to another, like cars or buses.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Cities</name>
+        <definition>Large areas with many buildings and people living in them.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Shopping</name>
+        <definition>Buying things from stores, like clothes or groceries.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Jobs</name>
+        <definition>Work people do to earn money.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Friends</name>
+        <definition>People you like and spend time with.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Books</name>
+        <definition>Printed works with stories or information.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Restaurants</name>
+        <definition>Places where you can buy and eat meals.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Seasons</name>
+        <definition>The four divisions of the year (spring, summer, autumn, winter) characterized by specific weather patterns.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Movies Genres</name>
+        <definition>Different types of films, like comedy or action.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Exercise</name>
+        <definition>Activities that help you stay fit, like running or swimming.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Clothing</name>
+        <definition>Things you wear, like shirts, pants, and shoes.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Toys</name>
+        <definition>Objects for children to play with.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Daily Routine</name>
+        <definition>The regular activities you do each day, like eating and sleeping.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Public Transport</name>
+        <definition>Buses, trains, or other vehicles that are used by many people.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Nature</name>
+        <definition>The natural world, including plants, animals, and landscapes.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Festivals</name>
+        <definition>Special events or celebrations for occasions or traditions.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Festive Foods</name>
+        <definition>Special foods made for celebrations, like cakes or cookies.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Music Instruments</name>
+        <definition>Tools used to make music, like guitars or pianos.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Art</name>
+        <definition>Creative works like paintings or drawings.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Pizza</name>
+        <definition>A popular Italian dish with a round bread base, topped with cheese, sauce, and various other ingredients.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Literature</name>
+        <definition>Books and written works that tell stories or provide information.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Camping</name>
+        <definition>Staying outdoors in a tent or camper for fun.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Internet</name>
+        <definition>A global network of connected computers that lets people share information.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Friends' Hobbies</name>
+        <definition>Activities your friends enjoy doing in their free time.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Local Events</name>
+        <definition>Activities or celebrations happening in your town or city.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Cooking</name>
+        <definition>Preparing food by mixing and heating ingredients.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Famous People</name>
+        <definition>Well-known individuals who have achieved something significant.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Pets' Needs</name>
+        <definition>What animals need to be healthy, like food and exercise.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Public Services</name>
+        <definition>Services provided by the government, like police or fire stations.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Online Shopping</name>
+        <definition>Buying items from the internet instead of a physical store.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Home Improvement</name>
+        <definition>Making changes or repairs to your house or apartment.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Social Activities</name>
+        <definition>Things you do with others for fun, like parties or games.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Travel Destinations</name>
+        <definition>Places you can visit for vacation or tourism.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Healthy Eating</name>
+        <definition>Choosing foods that are good for your body, like fruits and vegetables.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Exercise Routines</name>
+        <definition>Regular activities or workouts to keep fit, like jogging or yoga.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Seasonal Activities</name>
+        <definition>Fun things to do based on the time of year, like skiing in winter or swimming in summer.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Local Food</name>
+        <definition>Traditional or popular dishes from your area or country.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Art Supplies</name>
+        <definition>Materials used for creating art, like paints and brushes.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Music Concerts</name>
+        <definition>Live performances where you can listen to musicians play music.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Festive Traditions</name>
+        <definition>Customs and activities done during special holidays or celebrations.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Sports Teams</name>
+        <definition>Groups of people who play sports together and compete against others.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Seasonal Clothing</name>
+        <definition>Clothes you wear according to the season, like coats in winter or shorts in summer.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Volunteer Work</name>
+        <definition>Helping others without getting paid, often for a good cause.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Travel Experiences</name>
+        <definition>Personal stories or memories from visiting different places.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>School Subjects</name>
+        <definition>Different topics you study in school, like math or history.</definition>
+    </topic>
+    <topic difficulty="A">
+        <name>Music Festivals</name>
+        <definition>Events where many bands or artists perform over a few days.</definition>
+    </topic>
+</topics>
