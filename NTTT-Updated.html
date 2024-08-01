@@ -215,13 +215,16 @@
             } else if (currentDifficulty === 'A') {
                 // If not skipped 2 from A, switch back to B and C
                 skips.A = 0; // Reset skips for A
+            } else if (currentDifficulty === 'B') {
+                // If skipped 2 from B, switch to A
+                skips.B = 0; // Reset skips for B
             }
         }
 
         function getCurrentDifficulty() {
             if (usedTopics.length > 0) {
-                const lastUsedIndex = usedTopics[usedTopics.length - 1];
-                return topics[lastUsedIndex.difficulty][lastUsedIndex.index].difficulty;
+                const lastUsed = usedTopics[usedTopics.length - 1];
+                return lastUsed.difficulty;
             }
             return 'C'; // Default to hardest if no topics used
         }
@@ -243,11 +246,16 @@
         }
 
         function changeTopic() {
-            let currentDifficulty = 'C'; // Default to hardest difficulty
+            let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
             if (skips.C >= 2) {
                 currentDifficulty = 'A'; // Switch to easier topics
+                skips.C = 0; // Reset skips for C
             } else if (skips.A >= 2) {
                 currentDifficulty = 'B'; // Switch to medium topics
+                skips.A = 0; // Reset skips for A
+            } else if (skips.B >= 2) {
+                currentDifficulty = 'C'; // Switch to harder topics
+                skips.B = 0; // Reset skips for B
             }
 
             let availableTopics = topics[currentDifficulty];
