@@ -5,90 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Time to Think</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-
-        body {
-            font-family: 'Fredoka One', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #000000;
-            color: #ffffff;
-            margin: 0;
-        }
-        #banner {
-            width: 80%;
-            max-width: 600px;
-            height: 150px;
-            background-color: #333;
-            margin-bottom: 20px;
-        }
-        #topic {
-            font-size: 2em;
-            margin: 20px 0;
-            color: #61dafb;
-        }
-        #definition-link {
-            font-size: 1em;
-            color: #61dafb;
-            cursor: pointer;
-            text-decoration: underline;
-            display: none;
-        }
-        #definition-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #282c34;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1000;
-        }
-        #definition-modal p {
-            margin: 0 0 20px 0;
-        }
-        #timer {
-            font-size: 4em;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #61dafb;
-            color: #282c34;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #21a1f1;
-        }
-        #restart, #skip {
-            display: none;
-        }
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 999;
-        }
-        .button-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        /* Your CSS here */
     </style>
 </head>
 <body>
@@ -135,9 +52,8 @@
         fetch('NTTT-Topics.json')
             .then(response => response.json())
             .then(data => {
-                // Adjust this if your JSON structure is different
                 topics = Object.values(data).flat();
-                console.log('Topics loaded:', topics); // Debugging line
+                console.log('Topics loaded:', topics);
             })
             .catch(error => console.error('Error fetching topics:', error));
 
@@ -145,7 +61,7 @@
             if (isPaused) return;
             if (timeLeft <= 0) {
                 changeTopic();
-                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+                timeLeft = parseInt(document.getElementById('time-selector').value);
             } else {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
@@ -162,9 +78,9 @@
                 timer = setInterval(updateTimer, 1000);
                 startPauseButton.innerText = 'Pause';
                 document.getElementById('restart').style.display = 'block';
-                document.getElementById('skip').style.display = 'block'; // Show skip button
+                document.getElementById('skip').style.display = 'block';
                 definitionLink.style.display = 'block';
-                timeSelector.disabled = true; // Disable the time selector
+                timeSelector.disabled = true;
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -177,7 +93,7 @@
         function restartGame() {
             clearInterval(timer);
             timer = null;
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+            timeLeft = parseInt(document.getElementById('time-selector').value);
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
@@ -190,21 +106,20 @@
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
             document.getElementById('restart').style.display = 'none';
-            document.getElementById('skip').style.display = 'none'; // Hide skip button
+            document.getElementById('skip').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
-            document.getElementById('time-selector').disabled = false; // Enable the time selector
+            document.getElementById('time-selector').disabled = false;
         }
 
         function changeTopic() {
             if (usedTopics.length === topics.length) {
-                usedTopics = []; // Reset if all topics used
+                usedTopics = [];
             }
 
             let filteredTopics = filterTopicsByLevel();
 
             if (filteredTopics.length === 0) {
-                // Fallback if no topics available for current level
                 filteredTopics = topics;
             }
 
@@ -287,37 +202,36 @@
             document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
             document.getElementById('definition-modal').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
-            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+            document.getElementById('start-pause').innerText = 'Continue';
         }
 
         function closeDefinition() {
             isPaused = false;
             document.getElementById('definition-modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+            document.getElementById('start-pause').innerText = 'Pause';
         }
 
         function updateTime() {
             const timeSelector = document.getElementById('time-selector');
-            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
-            document.getElementById('selected-time').innerText = timeLeft; // Update display
+            timeLeft = parseInt(timeSelector.value);
+            document.getElementById('selected-time').innerText = timeLeft;
         }
 
         function skipTopic() {
             const skippedTopic = topics[currentTopicIndex];
             skippedTopics.push(skippedTopic);
-            changeTopic(); // Change to a new topic
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
+            changeTopic();
+            timeLeft = parseInt(document.getElementById('time-selector').value);
             document.getElementById('timer').innerText = timeLeft;
-            completedTopics[playerLevel] = 0; // Reset completed topic count for current difficulty
+            completedTopics[playerLevel] = 0;
         }
 
         function answerTopic() {
-            // Called when a topic is correctly answered
             const currentTopic = topics[currentTopicIndex];
             completedTopics[currentTopic.difficultyGroup] = (completedTopics[currentTopic.difficultyGroup] || 0) + 1;
-            changeTopic(); // Change to a new topic
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
+            changeTopic();
+            timeLeft = parseInt(document.getElementById('time-selector').value);
             document.getElementById('timer').innerText = timeLeft;
         }
     </script>
