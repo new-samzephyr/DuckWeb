@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #000000; /* Changed to black */
+            background-color: #000000; 
             color: #ffffff;
             margin: 0;
         }
@@ -85,12 +85,11 @@
             z-index: 999;
         }
         #timer-slider {
-            width: 150px; /* Smaller width */
+            width: 150px;
         }
         #slider-container {
-            margin-top: 20px; /* Added margin for spacing */
+            margin-top: 20px;
         }
-        /* New styles for button container */
         #button-container {
             display: flex;
             justify-content: center;
@@ -109,7 +108,7 @@
         <input type="range" id="timer-slider" min="1" max="3" value="2" step="1" onchange="setTimer()" style="width: 150px;">
     </div>
     
-    <div id="timer">20</div> <!-- Default timer set to 20 seconds -->
+    <div id="timer">20</div>
     
     <div id="button-container">
         <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
@@ -125,7 +124,7 @@
 
     <script>
         let timer;
-        let timeLeft = 20; // Default to 20 seconds
+        let timeLeft = 20; 
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
@@ -140,10 +139,9 @@
             C: 0
         };
 
-        // Load topics from Topics.xml file
         function loadTopics() {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'Topics.xml', true); // Ensure the path is correct
+            xhr.open('GET', 'Topics.xml', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -152,10 +150,10 @@
                         for (let i = 0; i < topicElements.length; i++) {
                             const name = topicElements[i].getElementsByTagName('name')[0].textContent;
                             const definition = topicElements[i].getElementsByTagName('definition')[0].textContent;
-                            const difficulty = topicElements[i].getAttribute('difficulty'); // Get difficulty from attribute
-                            topics[difficulty].push({ topic: name, definition: definition, difficulty: difficulty });
+                            const difficulty = topicElements[i].getAttribute('difficulty');
+                            topics[difficulty].push({ topic: name, definition: definition });
                         }
-                        console.log('Topics loaded:', topics); // Log loaded topics
+                        console.log('Topics loaded:', topics);
                     } else {
                         console.error('Error loading XML:', xhr.status, xhr.statusText);
                     }
@@ -171,7 +169,7 @@
             if (isPaused) return;
             if (timeLeft <= 0) {
                 changeTopic();
-                timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
+                timeLeft = parseInt(document.getElementById('timer-slider').value) * 10;
             } else {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
@@ -194,8 +192,8 @@
                 startPauseButton.innerText = 'Pause';
                 document.getElementById('restart').style.display = 'block';
                 definitionLink.style.display = 'block';
-                timerSlider.disabled = true; // Disable the slider
-                skipButton.style.display = 'inline'; // Show the skip button
+                timerSlider.disabled = true;
+                skipButton.style.display = 'inline';
             } else if (isPaused) {
                 isPaused = false;
                 startPauseButton.innerText = 'Pause';
@@ -208,23 +206,21 @@
         function skipTopic() {
             const currentDifficulty = getCurrentDifficulty();
             skips[currentDifficulty]++;
-
             if (skips[currentDifficulty] >= 2) {
                 adjustDifficulty(currentDifficulty);
             }
-
-            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset timer to slider value
-            document.getElementById('timer').innerText = timeLeft; // Update displayed timer
-            changeTopic(); // Skip to the next topic
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10;
+            document.getElementById('timer').innerText = timeLeft;
+            changeTopic();
         }
 
         function adjustDifficulty(currentDifficulty) {
             if (currentDifficulty === 'C') {
-                skips.C = 0; // Reset skips for C
+                skips.C = 0;
             } else if (currentDifficulty === 'B') {
-                skips.B = 0; // Reset skips for B
+                skips.B = 0;
             } else if (currentDifficulty === 'A') {
-                skips.A = 0; // Reset skips for A
+                skips.A = 0;
             }
         }
 
@@ -233,68 +229,66 @@
                 const lastUsed = usedTopics[usedTopics.length - 1];
                 return lastUsed.difficulty;
             }
-            return 'C'; // Default to hardest if no topics used
+            return 'C'; 
         }
 
         function restartGame() {
             clearInterval(timer);
             timer = null;
-            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10;
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
-            skips = { A: 0, B: 0, C: 0 }; // Reset skips for all difficulties
+            skips = { A: 0, B: 0, C: 0 };
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
             document.getElementById('restart').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
-            document.getElementById('timer-slider').disabled = false; // Re-enable the slider
-            document.getElementById('skip').style.display = 'none'; // Hide the skip button
+            document.getElementById('timer-slider').disabled = false;
+            document.getElementById('skip').style.display = 'none';
         }
 
         function changeTopic() {
-            let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
+            let currentDifficulty = getCurrentDifficulty();
             let availableTopics;
 
-            // Adjust difficulty based on skips
             if (skips.C >= 2) {
-                currentDifficulty = 'B'; // Switch to medium topics
-                skips.C = 0; // Reset skips for C
+                currentDifficulty = 'B';
+                skips.C = 0;
             } else if (skips.B >= 2) {
-                currentDifficulty = 'A'; // Switch to easier topics
-                skips.B = 0; // Reset skips for B
+                currentDifficulty = 'A';
+                skips.B = 0;
             } else if (skips.A >= 2) {
-                currentDifficulty = 'C'; // Switch to harder topics
-                skips.A = 0; // Reset skips for A
+                currentDifficulty = 'C';
+                skips.A = 0;
             }
 
-            // Prioritize topic selection
             if (currentDifficulty === 'A' && topics.A.length > 0) {
-                availableTopics = topics.A; // Select A topics if available
+                availableTopics = topics.A;
             } else if (currentDifficulty === 'B' && topics.B.length > 0) {
-                availableTopics = topics.B; // Select B topics if available
+                availableTopics = topics.B;
             } else if (topics.A.length > 0) {
-                availableTopics = topics.A; // Fallback to A if B is not available
+                availableTopics = topics.A;
             } else if (topics.B.length > 0) {
-                availableTopics = topics.B; // Fallback to B if A is not available
+                availableTopics = topics.B;
             } else {
-                availableTopics = topics.C; // Only use C if no A or B topics are available
+                availableTopics = topics.C;
             }
 
             if (availableTopics.length === 0) {
-                alert('No topics available for this difficulty.'); // Handle case where no topics are left
+                alert('No topics available for this difficulty.');
                 return;
             }
 
             if (usedTopics.length === availableTopics.length) {
-                usedTopics = []; // Reset if all topics used
+                usedTopics = [];
             }
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * availableTopics.length);
             } while (usedTopics.includes(randomIndex));
-            usedTopics.push({ index: randomIndex, difficulty: currentDifficulty }); // Store both index and difficulty
+            usedTopics.push({ index: randomIndex, difficulty: currentDifficulty });
             currentTopicIndex = randomIndex;
             document.getElementById('topic').innerText = availableTopics[currentTopicIndex].topic;
         }
@@ -307,7 +301,7 @@
                 document.getElementById('definition-text').innerText = currentTopic.definition; // Set the definition text
                 document.getElementById('definition-modal').style.display = 'block';
                 document.getElementById('overlay').style.display = 'block';
-                document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+                document.getElementById('start-pause').innerText = 'Continue';
             } else {
                 alert('No definition available for this topic.');
             }
@@ -317,16 +311,15 @@
             isPaused = false;
             document.getElementById('definition-modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+            document.getElementById('start-pause').innerText = 'Pause';
         }
 
         function setTimer() {
             const timerSlider = document.getElementById('timer-slider');
-            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (1, 2, or 3)
-            document.getElementById('timer').innerText = timeLeft; // Update displayed timer
+            timeLeft = parseInt(timerSlider.value) * 10; 
+            document.getElementById('timer').innerText = timeLeft; 
         }
 
-        // Load topics when the page is loaded
         window.onload = loadTopics;
     </script>
 </body>
