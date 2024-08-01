@@ -224,4 +224,208 @@
         <name>Music Festivals</name>
         <definition>Events where many bands or artists perform over a few days.</definition>
     </topic>
+        <topic difficulty="B">
+        <name>Education</name>
+        <definition>The system or process of learning, usually in schools or universities.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Social Media</name>
+        <definition>Platforms like Facebook or Instagram where people share content and connect online.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Fashion</name>
+        <definition>The popular styles and trends in clothing and accessories.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Technology</name>
+        <definition>The use of tools and machines to solve problems and improve life.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Health</name>
+        <definition>The condition of your body and mind, and how to keep them in good shape.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Transportation</name>
+        <definition>Different methods of moving people and goods, such as cars, buses, and trains.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Entertainment</name>
+        <definition>Activities that provide enjoyment, such as movies, music, and games.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Travel</name>
+        <definition>Going to different places for pleasure or work.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Work Environment</name>
+        <definition>The physical and social setting where you do your job.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Communication</name>
+        <definition>How people share information and ideas, like through talking or writing.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Shopping Habits</name>
+        <definition>The ways people buy and use goods, including what they prefer to purchase.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Food Culture</name>
+        <definition>The customs and practices related to eating and cooking in different regions.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Public Health</name>
+        <definition>The overall health of a community and efforts to improve it.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Urban Life</name>
+        <definition>The lifestyle and challenges associated with living in a city.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Rural Life</name>
+        <definition>The lifestyle and activities in the countryside or small towns.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Recycling</name>
+        <definition>The process of reusing materials to reduce waste and protect the environment.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Sports Events</name>
+        <definition>Competitions or games where athletes or teams compete in various sports.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Cultural Festivals</name>
+        <definition>Events that celebrate different cultures and their traditions.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Media</name>
+        <definition>Various methods of communication, such as newspapers, television, and radio.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Digital Devices</name>
+        <definition>Electronic gadgets used for various tasks, like smartphones and computers.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Environmental Issues</name>
+        <definition>Problems affecting the environment, such as pollution and climate change.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Historical Events</name>
+        <definition>Important occurrences from the past that have shaped the present.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Global Issues</name>
+        <definition>Problems that affect people worldwide, such as poverty and climate change.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Creative Arts</name>
+        <definition>Forms of artistic expression, such as painting, music, and theater.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Economic Systems</name>
+        <definition>The ways countries organize their economies, including capitalism and socialism.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Innovation</name>
+        <definition>The introduction of new ideas, methods, or products that improve things.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Science</name>
+        <definition>The study of the natural world through observation and experimentation.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Culture</name>
+        <definition>The arts, beliefs, and practices of a group of people.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Economy</name>
+        <definition>The system of production, distribution, and consumption of goods and services.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Politics</name>
+        <definition>The activities and processes involved in governing and making decisions for a society.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Environment</name>
+        <definition>The natural world and the impact of human activities on it.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Technology Trends</name>
+        <definition>The latest developments and innovations in technology.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Globalization</name>
+        <definition>The increasing interconnectedness of countries through trade, communication, and travel.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Sustainable Development</name>
+        <definition>Economic growth that is achieved without depleting natural resources.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Artificial Intelligence</name>
+        <definition>The simulation of human intelligence by machines and computer systems.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Ethical Issues</name>
+        <definition>Moral questions and problems that arise in various fields.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Climate Change</name>
+        <definition>Long-term changes in temperature and weather patterns caused by human activities.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Urbanization</name>
+        <definition>The growth of cities and the increase in the number of people living in urban areas.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Global Health</name>
+        <definition>Health issues that affect people worldwide, such as diseases and health policies.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Economic Inequality</name>
+        <definition>The unequal distribution of wealth and resources among different groups of people.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Cultural Exchange</name>
+        <definition>The sharing and learning of cultural practices and ideas between different societies.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>International Trade</name>
+        <definition>The exchange of goods and services between countries.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Environmental Policy</name>
+        <definition>Government actions and regulations aimed at protecting the environment.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Human Rights</name>
+        <definition>The basic freedoms and rights that all people should have, regardless of their background.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Technological Ethics</name>
+        <definition>The study of moral issues related to technology and its use.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Crisis Management</name>
+        <definition>Strategies and actions taken to handle and resolve emergencies or disasters.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Corporate Social Responsibility</name>
+        <definition>Business practices that involve contributing positively to society and the environment.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Digital Transformation</name>
+        <definition>The use of digital technologies to change and improve business processes and operations.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Geopolitics</name>
+        <definition>The study of how geographic factors influence global politics and international relations.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Renewable Energy</name>
+        <definition>Energy sources that are replenished naturally and can be used repeatedly, like solar and wind power.</definition>
+    </topic>
+    <topic difficulty="B">
+        <name>Future Technologies</name>
+        <definition>Emerging and anticipated technologies that could shape the future, such as advanced robotics and nanotechnology.</definition>
+    </topic>
 </topics>
