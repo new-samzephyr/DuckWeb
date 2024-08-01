@@ -234,11 +234,22 @@ function filterTopicsByLevel() {
         return [];
     }
 
+    console.log('Current group:', currentGroup); // Debugging line
+
     // Count skips by difficulty group
     const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
-        acc[group] = skippedTopics.filter(t => difficultyGroups[group] && difficultyGroups[group].includes(t.difficulty)).length;
+        acc[group] = skippedTopics.filter(t => {
+            if (t.difficulty) {
+                return difficultyGroups[group].includes(t.difficulty);
+            } else {
+                console.warn('Skipped topic missing difficulty:', t);
+                return false;
+            }
+        }).length;
         return acc;
     }, {});
+
+    console.log('Skips by group:', skipsByGroup); // Debugging line
 
     // Adjust level based on skipped topics
     if (skipsByGroup[currentGroup] >= 3) {
