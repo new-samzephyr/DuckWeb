@@ -5,12 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Time to Think</title>
     <style>
-        /* Your CSS here */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #banner img {
+            width: 100%;
+            height: auto;
+        }
+        #topic {
+            font-size: 24px;
+            margin: 20px;
+            padding: 20px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+        }
+        #timer {
+            font-size: 20px;
+            margin: 20px;
+        }
+        .button-container {
+            margin: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #definition-link {
+            color: #007BFF;
+            cursor: pointer;
+            margin: 20px;
+            display: inline-block;
+        }
+        #definition-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            z-index: 1000;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 500;
+        }
+        #definition-text {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div id="banner">
-        <img src="NTTT.png" alt="Banner Image" style="width: 100%; height: 100%; object-fit: cover;">
+        <img src="NTTT.png" alt="Banner Image">
     </div>
     <div id="topic">Press Start to Begin</div>
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
@@ -144,9 +203,9 @@
                 difficultyGroups[group].includes(playerLevel)
             );
 
-            console.log('Player Level:', playerLevel); // Debugging line
-            console.log('Difficulty Groups:', difficultyGroups); // Debugging line
-            console.log('Current Group:', currentGroup); // Debugging line
+            console.log('Player Level:', playerLevel);
+            console.log('Difficulty Groups:', difficultyGroups);
+            console.log('Current Group:', currentGroup);
 
             if (!currentGroup) {
                 console.error('Current group not found for level:', playerLevel);
@@ -166,7 +225,7 @@
                 return acc;
             }, {});
 
-            console.log('Skips by group:', skipsByGroup); // Debugging line
+            console.log('Skips by group:', skipsByGroup);
 
             // Adjust level based on skipped topics
             if (skipsByGroup[currentGroup] >= 3) {
