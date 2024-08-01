@@ -101,13 +101,13 @@
     
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
     <div id="timer">30</div>
-    <button id="start-pause" onclick="startPauseGame()">Start</button>
-    <button id="restart" onclick="restartGame()">Restart</button>
+    <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
+    <button id="restart" aria-label="Restart the game" onclick="restartGame()">Restart</button>
 
     <div id="overlay"></div>
     <div id="definition-modal">
         <p id="definition-text"></p>
-        <button onclick="closeDefinition()">Got it</button>
+        <button aria-label="Close definition" onclick="closeDefinition()">Got it</button>
     </div>
 
     <script>
@@ -121,17 +121,25 @@
         // Load topics from XML file
         function loadTopics() {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'topics.xml', true); // Assuming the XML file is named topics.xml
+            xhr.open('GET', 'topics.xml', true); // Ensure the path is correct
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    const xml = xhr.responseXML;
-                    const topicElements = xml.getElementsByTagName('topic');
-                    for (let i = 0; i < topicElements.length; i++) {
-                        const name = topicElements[i].getElementsByTagName('name')[0].textContent;
-                        const definition = topicElements[i].getElementsByTagName('definition')[0].textContent;
-                        topics.push({ topic: name, definition: definition });
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        const xml = xhr.responseXML;
+                        const topicElements = xml.getElementsByTagName('topic');
+                        for (let i = 0; i < topicElements.length; i++) {
+                            const name = topicElements[i].getElementsByTagName('name')[0].textContent;
+                            const definition = topicElements[i].getElementsByTagName('definition')[0].textContent;
+                            topics.push({ topic: name, definition: definition });
+                        }
+                        console.log('Topics loaded:', topics); // Log loaded topics
+                    } else {
+                        console.error('Error loading XML:', xhr.status, xhr.statusText);
                     }
                 }
+            };
+            xhr.onerror = function () {
+                alert('An error occurred while loading topics. Please try again later.');
             };
             xhr.send();
         }
