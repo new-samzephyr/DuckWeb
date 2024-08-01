@@ -85,7 +85,7 @@
             z-index: 999;
         }
         #timer-slider {
-            width: 300px;
+            width: 150px; /* Smaller width */
         }
     </style>
 </head>
@@ -96,12 +96,12 @@
     <div id="topic">Press Start to Begin</div>
     
     <div>
-        <label for="timer-slider">Set Timer: <span id="slider-value">15</span> seconds</label>
-        <input type="range" id="timer-slider" min="10" max="30" value="15" onchange="setTimer()">
+        <label for="timer-slider">Set Timer:</label>
+        <input type="range" id="timer-slider" min="0" max="2" value="1" step="1" onchange="setTimer()" style="width: 150px;">
     </div>
     
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
-    <div id="timer">15</div>
+    <div id="timer">20</div>
     <button id="start-pause" onclick="startPauseGame()">Start</button>
     <button id="restart" onclick="restartGame()">Restart</button>
 
@@ -181,7 +181,7 @@
         ];
 
         let timer;
-        let timeLeft = 15; // Default to 15 seconds
+        let timeLeft = 20; // Default to 20 seconds
         let currentTopicIndex = 0;
         let isPaused = false;
         let usedTopics = [];
@@ -190,7 +190,7 @@
             if (isPaused) return;
             if (timeLeft <= 0) {
                 changeTopic();
-                timeLeft = parseInt(document.getElementById('timer-slider').value); // Reset to selected time
+                timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
             } else {
                 timeLeft--;
                 document.getElementById('timer').innerText = timeLeft;
@@ -218,7 +218,7 @@
         function restartGame() {
             clearInterval(timer);
             timer = null;
-            timeLeft = parseInt(document.getElementById('timer-slider').value); // Reset to selected time
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
             currentTopicIndex = 0;
             isPaused = false;
             usedTopics = [];
@@ -259,9 +259,8 @@
 
         function setTimer() {
             const timerSlider = document.getElementById('timer-slider');
-            timeLeft = parseInt(timerSlider.value); // Set timeLeft based on slider value
+            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (0, 1, or 2)
             document.getElementById('timer').innerText = timeLeft; // Update displayed timer
-            document.getElementById('slider-value').innerText = timeLeft; // Update slider value display
         }
     </script>
 </body>
