@@ -117,192 +117,192 @@
     </div>
 
     <script>
-        let topics = [];
-        let timer;
-        let timeLeft = 20; // Default to 20 seconds
-        let currentTopicIndex = 0;
-        let isPaused = false;
-        let usedTopics = [];
-        let skippedTopics = [];
-        let completedTopics = {
-            'A': 0,
-            'B': 0,
-            'C': 0
-        };
-        let playerLevel = 'B'; // Default to B level
+let topics = [];
+let timer;
+let timeLeft = 20; // Default to 20 seconds
+let currentTopicIndex = 0;
+let isPaused = false;
+let usedTopics = [];
+let skippedTopics = [];
+let completedTopics = {
+    'A': 0,
+    'B': 0,
+    'C': 0
+};
+let playerLevel = 'B'; // Default to B level
 
-        // Fetch topics from JSON file
-        fetch('NTTT-Topics.json')
-            .then(response => response.json())
-            .then(data => {
-                // Adjust this if your JSON structure is different
-                topics = Object.values(data).flat();
-                console.log('Topics loaded:', topics); // Debugging line
-            })
-            .catch(error => console.error('Error fetching topics:', error));
+// Fetch topics from JSON file
+fetch('NTTT-Topics.json')
+    .then(response => response.json())
+    .then(data => {
+        // Flatten the nested JSON into a single array of topics
+        topics = Object.values(data).flat();
+        console.log('Topics loaded:', topics); // Debugging line
+    })
+    .catch(error => console.error('Error fetching topics:', error));
 
-        function updateTimer() {
-            if (isPaused) return;
-            if (timeLeft <= 0) {
-                changeTopic();
-                timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
-            } else {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-            }
+function updateTimer() {
+    if (isPaused) return;
+    if (timeLeft <= 0) {
+        changeTopic();
+        timeLeft = parseInt(document.getElementById('time-selector').value); // Reset to selected time
+    } else {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+    }
+}
+
+function startPauseGame() {
+    const startPauseButton = document.getElementById('start-pause');
+    const definitionLink = document.getElementById('definition-link');
+    const timeSelector = document.getElementById('time-selector');
+
+    if (!timer) {
+        changeTopic();
+        timer = setInterval(updateTimer, 1000);
+        startPauseButton.innerText = 'Pause';
+        document.getElementById('restart').style.display = 'block';
+        document.getElementById('skip').style.display = 'block'; // Show skip button
+        definitionLink.style.display = 'block';
+        timeSelector.disabled = true; // Disable the time selector
+    } else if (isPaused) {
+        isPaused = false;
+        startPauseButton.innerText = 'Pause';
+    } else {
+        isPaused = true;
+        startPauseButton.innerText = 'Continue';
+    }
+}
+
+function restartGame() {
+    clearInterval(timer);
+    timer = null;
+    timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
+    currentTopicIndex = 0;
+    isPaused = false;
+    usedTopics = [];
+    skippedTopics = [];
+    completedTopics = {
+        'A': 0,
+        'B': 0,
+        'C': 0
+    };
+    document.getElementById('topic').innerText = 'Press Start to Begin';
+    document.getElementById('timer').innerText = timeLeft;
+    document.getElementById('restart').style.display = 'none';
+    document.getElementById('skip').style.display = 'none'; // Hide skip button
+    document.getElementById('start-pause').innerText = 'Start';
+    document.getElementById('definition-link').style.display = 'none';
+    document.getElementById('time-selector').disabled = false; // Enable the time selector
+}
+
+function changeTopic() {
+    if (usedTopics.length === topics.length) {
+        usedTopics = []; // Reset if all topics used
+    }
+
+    let filteredTopics = filterTopicsByLevel();
+
+    if (filteredTopics.length === 0) {
+        // Fallback if no topics available for current level
+        filteredTopics = topics;
+    }
+
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * filteredTopics.length);
+    } while (usedTopics.includes(filteredTopics[randomIndex].topic));
+    usedTopics.push(filteredTopics[randomIndex].topic);
+    currentTopicIndex = topics.findIndex(t => t.topic === filteredTopics[randomIndex].topic);
+    document.getElementById('topic').innerText = filteredTopics[randomIndex].topic;
+}
+
+function filterTopicsByLevel() {
+    const difficultyGroups = {
+        'A': ['A1', 'A2'],
+        'B': ['B1', 'B2'],
+        'C': ['C1', 'C2']
+    };
+
+    // Determine current difficulty group
+    const currentGroup = Object.keys(difficultyGroups).find(group =>
+        difficultyGroups[group].includes(playerLevel)
+    );
+
+    // Count skips by difficulty group
+    const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
+        acc[group] = skippedTopics.filter(t => difficultyGroups[group].includes(t.difficulty)).length;
+        return acc;
+    }, {});
+
+    // Adjust level based on skipped topics
+    if (skipsByGroup[currentGroup] >= 3) {
+        // Show easier topics if too many of current level are skipped
+        const easierGroup = getEasierGroup(currentGroup);
+        if (easierGroup) {
+            return topics.filter(t => difficultyGroups[easierGroup].includes(t.difficulty));
         }
+    }
 
-        function startPauseGame() {
-            const startPauseButton = document.getElementById('start-pause');
-            const definitionLink = document.getElementById('definition-link');
-            const timeSelector = document.getElementById('time-selector');
-
-            if (!timer) {
-                changeTopic();
-                timer = setInterval(updateTimer, 1000);
-                startPauseButton.innerText = 'Pause';
-                document.getElementById('restart').style.display = 'block';
-                document.getElementById('skip').style.display = 'block'; // Show skip button
-                definitionLink.style.display = 'block';
-                timeSelector.disabled = true; // Disable the time selector
-            } else if (isPaused) {
-                isPaused = false;
-                startPauseButton.innerText = 'Pause';
-            } else {
-                isPaused = true;
-                startPauseButton.innerText = 'Continue';
-            }
+    // Increase difficulty if too many topics answered from current group
+    if (completedTopics[currentGroup] >= 2) {
+        const harderGroup = getHarderGroup(currentGroup);
+        if (harderGroup) {
+            return topics.filter(t => difficultyGroups[harderGroup].includes(t.difficulty));
         }
+    }
 
-        function restartGame() {
-            clearInterval(timer);
-            timer = null;
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Set initial time from slider
-            currentTopicIndex = 0;
-            isPaused = false;
-            usedTopics = [];
-            skippedTopics = [];
-            completedTopics = {
-                'A': 0,
-                'B': 0,
-                'C': 0
-            };
-            document.getElementById('topic').innerText = 'Press Start to Begin';
-            document.getElementById('timer').innerText = timeLeft;
-            document.getElementById('restart').style.display = 'none';
-            document.getElementById('skip').style.display = 'none'; // Hide skip button
-            document.getElementById('start-pause').innerText = 'Start';
-            document.getElementById('definition-link').style.display = 'none';
-            document.getElementById('time-selector').disabled = false; // Enable the time selector
-        }
+    return topics.filter(t => difficultyGroups[currentGroup].includes(t.difficulty));
+}
 
-        function changeTopic() {
-            if (usedTopics.length === topics.length) {
-                usedTopics = []; // Reset if all topics used
-            }
+function getEasierGroup(currentGroup) {
+    const groups = { 'A': 'B', 'B': 'C', 'C': null };
+    return groups[currentGroup];
+}
 
-            let filteredTopics = filterTopicsByLevel();
+function getHarderGroup(currentGroup) {
+    const groups = { 'A': 'B', 'B': 'C', 'C': null };
+    return Object.keys(groups).find(group => groups[group] === currentGroup);
+}
 
-            if (filteredTopics.length === 0) {
-                // Fallback if no topics available for current level
-                filteredTopics = topics;
-            }
+function showDefinition() {
+    isPaused = true;
+    document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
+    document.getElementById('definition-modal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+}
 
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * filteredTopics.length);
-            } while (usedTopics.includes(filteredTopics[randomIndex].topic));
-            usedTopics.push(filteredTopics[randomIndex].topic);
-            currentTopicIndex = topics.findIndex(t => t.topic === filteredTopics[randomIndex].topic);
-            document.getElementById('topic').innerText = filteredTopics[randomIndex].topic;
-        }
+function closeDefinition() {
+    isPaused = false;
+    document.getElementById('definition-modal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+}
 
-        function filterTopicsByLevel() {
-            const difficultyGroups = {
-                'A': ['A1', 'A2'],
-                'B': ['B1', 'B2'],
-                'C': ['C1', 'C2']
-            };
+function updateTime() {
+    const timeSelector = document.getElementById('time-selector');
+    timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
+    document.getElementById('selected-time').innerText = timeLeft; // Update display
+}
 
-            // Determine current difficulty group
-            const currentGroup = Object.keys(difficultyGroups).find(group =>
-                difficultyGroups[group].includes(playerLevel)
-            );
+function skipTopic() {
+    const skippedTopic = topics[currentTopicIndex];
+    skippedTopics.push(skippedTopic);
+    changeTopic(); // Change to a new topic
+    timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
+    document.getElementById('timer').innerText = timeLeft;
+    completedTopics[playerLevel] = 0; // Reset completed topic count for current difficulty
+}
 
-            // Count skips by difficulty group
-            const skipsByGroup = Object.keys(difficultyGroups).reduce((acc, group) => {
-                acc[group] = skippedTopics.filter(t => difficultyGroups[group].includes(t.difficulty)).length;
-                return acc;
-            }, {});
-
-            // Adjust level based on skipped topics
-            if (skipsByGroup[currentGroup] >= 3) {
-                // Show easier topics if too many of current level are skipped
-                const easierGroup = getEasierGroup(currentGroup);
-                if (easierGroup) {
-                    return topics.filter(t => difficultyGroups[easierGroup].includes(t.difficulty));
-                }
-            }
-
-            // Increase difficulty if too many topics answered from current group
-            if (completedTopics[currentGroup] >= 2) {
-                const harderGroup = getHarderGroup(currentGroup);
-                if (harderGroup) {
-                    return topics.filter(t => difficultyGroups[harderGroup].includes(t.difficulty));
-                }
-            }
-
-            return topics.filter(t => difficultyGroups[currentGroup].includes(t.difficulty));
-        }
-
-        function getEasierGroup(currentGroup) {
-            const groups = { 'A': 'B', 'B': 'C', 'C': null };
-            return groups[currentGroup];
-        }
-
-        function getHarderGroup(currentGroup) {
-            const groups = { 'A': 'B', 'B': 'C', 'C': null };
-            return Object.keys(groups).find(group => groups[group] === currentGroup);
-        }
-
-        function showDefinition() {
-            isPaused = true;
-            document.getElementById('definition-text').innerText = topics[currentTopicIndex].definition;
-            document.getElementById('definition-modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
-        }
-
-        function closeDefinition() {
-            isPaused = false;
-            document.getElementById('definition-modal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
-        }
-
-        function updateTime() {
-            const timeSelector = document.getElementById('time-selector');
-            timeLeft = parseInt(timeSelector.value); // Update timeLeft based on slider
-            document.getElementById('selected-time').innerText = timeLeft; // Update display
-        }
-
-        function skipTopic() {
-            const skippedTopic = topics[currentTopicIndex];
-            skippedTopics.push(skippedTopic);
-            changeTopic(); // Change to a new topic
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
-            document.getElementById('timer').innerText = timeLeft;
-            completedTopics[playerLevel] = 0; // Reset completed topic count for current difficulty
-        }
-
-        function answerTopic() {
-            // Called when a topic is correctly answered
-            const currentTopic = topics[currentTopicIndex];
-            completedTopics[currentTopic.difficultyGroup] = (completedTopics[currentTopic.difficultyGroup] || 0) + 1;
-            changeTopic(); // Change to a new topic
-            timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
-            document.getElementById('timer').innerText = timeLeft;
-        }
+function answerTopic() {
+    // Called when a topic is correctly answered
+    const currentTopic = topics[currentTopicIndex];
+    completedTopics[currentTopic.difficulty] = (completedTopics[currentTopic.difficulty] || 0) + 1;
+    changeTopic(); // Change to a new topic
+    timeLeft = parseInt(document.getElementById('time-selector').value); // Reset timer
+    document.getElementById('timer').innerText = timeLeft;
+}
     </script>
 </body>
 </html>
