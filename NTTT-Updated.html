@@ -244,6 +244,9 @@
 
         function changeTopic() {
             let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
+            let availableTopics;
+
+            // Check the number of skips and adjust difficulty accordingly
             if (skips.C >= 2) {
                 currentDifficulty = 'B'; // Switch to medium topics
                 skips.C = 0; // Reset skips for C
@@ -255,7 +258,15 @@
                 skips.A = 0; // Reset skips for A
             }
 
-            let availableTopics = topics[currentDifficulty];
+            // Prioritize topic selection
+            if (currentDifficulty === 'A') {
+                availableTopics = topics.A.length > 0 ? topics.A : (topics.B.length > 0 ? topics.B : topics.C);
+            } else if (currentDifficulty === 'B') {
+                availableTopics = topics.B.length > 0 ? topics.B : topics.C;
+            } else {
+                availableTopics = topics.C; // Default to C if no other options
+            }
+
             if (availableTopics.length === 0) {
                 alert('No topics available for this difficulty.'); // Handle case where no topics are left
                 return;
