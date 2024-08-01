@@ -1,5 +1,5 @@
 {
-    "A1": [
+    "A": [
         {
             "topic": "Animals",
             "definition": "Living creatures like dogs, cats, and birds.",
@@ -149,9 +149,7 @@
             "topic": "Pizza",
             "definition": "A popular Italian dish with a round bread base, topped with cheese, sauce, and various other ingredients.",
             "difficulty": "A1"
-        }
-    ],
-    "A2": [
+        },
         {
             "topic": "Literature",
             "definition": "Books and written works that tell stories or provide information.",
@@ -283,7 +281,7 @@
             "difficulty": "A2"
         }
     ],
-    "B1": [
+    "B": [
         {
             "topic": "Education",
             "definition": "The system or process of learning, usually in schools or universities.",
@@ -413,9 +411,7 @@
             "topic": "Innovation",
             "definition": "The introduction of new ideas, methods, or products that improve things.",
             "difficulty": "B1"
-        }
-    ],
-    "B2": [
+        },
         {
             "topic": "Science",
             "definition": "The study of the natural world through observation and experimentation.",
@@ -542,7 +538,7 @@
             "difficulty": "B2"
         }
     ],
-    "C1": [
+    "C": [
         {
             "topic": "Philosophy",
             "definition": "The study of fundamental questions about existence, knowledge, and ethics.",
@@ -682,9 +678,7 @@
             "topic": "Philosophy of Education",
             "definition": "The study of fundamental questions about education, including its purpose and methods.",
             "difficulty": "C1"
-        }
-    ],
-    "C2": [
+        },
         {
             "topic": "Innovation",
             "definition": "The process of developing and applying new ideas, methods, or products.",
