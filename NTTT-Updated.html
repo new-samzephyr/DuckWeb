@@ -5,21 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Time to Think</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Fredoka One', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #000;
-            color: #fff;
+            background-color: #000000; 
+            color: #ffffff;
+            margin: 0;
+        }
+        #banner {
+            width: 80%;
+            max-width: 600px;
+            height: 150px;
+            background-color: #333;
+            margin-bottom: 20px;
         }
         #topic {
             font-size: 2em;
             margin: 20px 0;
+            color: #61dafb;
         }
         #definition-link {
+            font-size: 1em;
+            color: #61dafb;
             cursor: pointer;
             text-decoration: underline;
             display: none;
@@ -30,10 +43,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #333;
+            background-color: #282c34;
             padding: 20px;
             border-radius: 10px;
+            text-align: center;
             z-index: 1000;
+        }
+        #definition-modal p {
+            margin: 0 0 20px 0;
         }
         #overlay {
             position: fixed;
@@ -45,9 +62,24 @@
             display: none;
             z-index: 999;
         }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #21a1f1;
+        }
     </style>
 </head>
 <body>
+    <div id="banner">Welcome to No Time to Think!</div>
     <div id="topic">Press Start to Begin</div>
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
     <div id="definition-modal">
@@ -74,7 +106,7 @@
                             const difficulty = topicElements[i].getAttribute('difficulty');
                             topics[difficulty].push({ topic: name, definition: definition });
                         }
-                        console.log('Loaded topics:', topics); // Log loaded topics
+                        console.log('Loaded topics:', topics);
                     } else {
                         console.error('Error loading XML:', xhr.status, xhr.statusText);
                     }
