@@ -87,6 +87,9 @@
         #timer-slider {
             width: 150px; /* Smaller width */
         }
+        #slider-container {
+            margin-top: 20px; /* Added margin for spacing */
+        }
     </style>
 </head>
 <body>
@@ -97,7 +100,7 @@
     
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
     
-    <div>
+    <div id="slider-container">
         <input type="range" id="timer-slider" min="1" max="3" value="2" step="1" onchange="setTimer()" style="width: 150px;">
     </div>
     
