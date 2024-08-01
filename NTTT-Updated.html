@@ -246,7 +246,7 @@
             let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
             let availableTopics;
 
-            // Check the number of skips and adjust difficulty accordingly
+            // Adjust difficulty based on skips
             if (skips.C >= 2) {
                 currentDifficulty = 'B'; // Switch to medium topics
                 skips.C = 0; // Reset skips for C
@@ -259,12 +259,16 @@
             }
 
             // Prioritize topic selection
-            if (currentDifficulty === 'A') {
-                availableTopics = topics.A.length > 0 ? topics.A : (topics.B.length > 0 ? topics.B : topics.C);
-            } else if (currentDifficulty === 'B') {
-                availableTopics = topics.B.length > 0 ? topics.B : topics.C;
+            if (currentDifficulty === 'A' && topics.A.length > 0) {
+                availableTopics = topics.A; // Select A topics if available
+            } else if (currentDifficulty === 'B' && topics.B.length > 0) {
+                availableTopics = topics.B; // Select B topics if available
+            } else if (topics.A.length > 0) {
+                availableTopics = topics.A; // Fallback to A if B is not available
+            } else if (topics.B.length > 0) {
+                availableTopics = topics.B; // Fallback to B if A is not available
             } else {
-                availableTopics = topics.C; // Default to C if no other options
+                availableTopics = topics.C; // Only use C if no A or B topics are available
             }
 
             if (availableTopics.length === 0) {
