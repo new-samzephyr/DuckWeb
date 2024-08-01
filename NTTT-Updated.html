@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #000000; 
+            background-color: #000000; /* Changed to black */
             color: #ffffff;
             margin: 0;
         }
@@ -52,15 +52,10 @@
         #definition-modal p {
             margin: 0 0 20px 0;
         }
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 999;
+        #timer {
+            font-size: 4em;
+            margin: 10px 0;
+            font-weight: bold;
         }
         button {
             padding: 10px 20px;
@@ -76,25 +71,71 @@
         button:hover {
             background-color: #21a1f1;
         }
+        #restart {
+            display: none;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        #timer-slider {
+            width: 150px; /* Smaller width */
+        }
+        #slider-container {
+            margin-top: 20px; /* Added margin for spacing */
+        }
     </style>
 </head>
 <body>
-    <div id="banner">Welcome to No Time to Think!</div>
+    <div id="banner">
+        <img src="NTTT.png" alt="Banner Image" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
     <div id="topic">Press Start to Begin</div>
+    
     <div id="definition-link" onclick="showDefinition()">What is this?</div>
+    
+    <div id="slider-container">
+        <input type="range" id="timer-slider" min="1" max="3" value="2" step="1" onchange="setTimer()" style="width: 150px;">
+    </div>
+    
+    <div id="timer">20</div> <!-- Default timer set to 20 seconds -->
+    <button id="start-pause" aria-label="Start or pause the game" onclick="startPauseGame()">Start</button>
+    <button id="skip" aria-label="Skip the current topic" onclick="skipTopic()">Skip</button>
+    <button id="restart" aria-label="Restart the game" onclick="restartGame()">Restart</button>
+
+    <div id="overlay"></div>
     <div id="definition-modal">
         <p id="definition-text"></p>
-        <button onclick="closeDefinition()">Got it</button>
+        <button aria-label="Close definition" onclick="closeDefinition()">Got it</button>
     </div>
-    <div id="overlay"></div>
-    <button onclick="startGame()">Start Game</button>
 
     <script>
-        let topics = { A: [], B: [], C: [] };
+        let timer;
+        let timeLeft = 20; // Default to 20 seconds
+        let currentTopicIndex = 0;
+        let isPaused = false;
+        let usedTopics = [];
+        let topics = {
+            A: [],
+            B: [],
+            C: []
+        };
+        let skips = {
+            A: 0,
+            B: 0,
+            C: 0
+        };
 
+        // Load topics from Topics.xml file
         function loadTopics() {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'Topics.xml', true);
+            xhr.open('GET', 'Topics.xml', true); // Ensure the path is correct
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -103,51 +144,173 @@
                         for (let i = 0; i < topicElements.length; i++) {
                             const name = topicElements[i].getElementsByTagName('name')[0].textContent;
                             const definition = topicElements[i].getElementsByTagName('definition')[0].textContent;
-                            const difficulty = topicElements[i].getAttribute('difficulty');
-                            topics[difficulty].push({ topic: name, definition: definition });
+                            const difficulty = topicElements[i].getAttribute('difficulty'); // Get difficulty from attribute
+                            topics[difficulty].push({ topic: name, definition: definition, difficulty: difficulty });
                         }
-                        console.log('Loaded topics:', topics);
+                        console.log('Topics loaded:', topics); // Log loaded topics
                     } else {
                         console.error('Error loading XML:', xhr.status, xhr.statusText);
                     }
                 }
             };
+            xhr.onerror = function () {
+                alert('An error occurred while loading topics. Please check the file path and try again.');
+            };
             xhr.send();
         }
 
-        function startGame() {
-            const currentDifficulty = 'A'; // Start with difficulty A
-            const availableTopics = topics[currentDifficulty];
-            if (availableTopics.length > 0) {
-                const randomIndex = Math.floor(Math.random() * availableTopics.length);
-                const selectedTopic = availableTopics[randomIndex];
-                document.getElementById('topic').innerText = selectedTopic.topic;
-                document.getElementById('definition-link').style.display = 'block';
-                console.log('Selected Topic:', selectedTopic);
+        function updateTimer() {
+            if (isPaused) return;
+            if (timeLeft <= 0) {
+                changeTopic();
+                timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
             } else {
-                alert('No topics available for this difficulty.');
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
             }
+        }
+
+        function startPauseGame() {
+            const startPauseButton = document.getElementById('start-pause');
+            const definitionLink = document.getElementById('definition-link');
+            const timerSlider = document.getElementById('timer-slider');
+
+            if (!timer) {
+                if (topics.C.length === 0 && topics.B.length === 0 && topics.A.length === 0) {
+                    alert('No topics loaded. Please check the XML file.');
+                    return;
+                }
+                changeTopic();
+                timer = setInterval(updateTimer, 1000);
+                startPauseButton.innerText = 'Pause';
+                document.getElementById('restart').style.display = 'block';
+                definitionLink.style.display = 'block';
+                timerSlider.disabled = true; // Disable the slider
+            } else if (isPaused) {
+                isPaused = false;
+                startPauseButton.innerText = 'Pause';
+            } else {
+                isPaused = true;
+                startPauseButton.innerText = 'Continue';
+            }
+        }
+
+        function skipTopic() {
+            const currentDifficulty = getCurrentDifficulty();
+            skips[currentDifficulty]++;
+
+            if (skips[currentDifficulty] >= 2) {
+                adjustDifficulty(currentDifficulty);
+            }
+
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset timer to slider value
+            document.getElementById('timer').innerText = timeLeft; // Update displayed timer
+            changeTopic(); // Skip to the next topic
+        }
+
+        function adjustDifficulty(currentDifficulty) {
+            if (currentDifficulty === 'C') {
+                skips.C = 0; // Reset skips for C
+            } else if (currentDifficulty === 'B') {
+                skips.B = 0; // Reset skips for B
+            } else if (currentDifficulty === 'A') {
+                skips.A = 0; // Reset skips for A
+            }
+        }
+
+        function getCurrentDifficulty() {
+            if (usedTopics.length > 0) {
+                const lastUsed = usedTopics[usedTopics.length - 1];
+                return lastUsed.difficulty;
+            }
+            return 'C'; // Default to hardest if no topics used
+        }
+
+        function restartGame() {
+            clearInterval(timer);
+            timer = null;
+            timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
+            currentTopicIndex = 0;
+            isPaused = false;
+            usedTopics = [];
+            skips = { A: 0, B: 0, C: 0 }; // Reset skips for all difficulties
+            document.getElementById('topic').innerText = 'Press Start to Begin';
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('restart').style.display = 'none';
+            document.getElementById('start-pause').innerText = 'Start';
+            document.getElementById('definition-link').style.display = 'none';
+            document.getElementById('timer-slider').disabled = false; // Re-enable the slider
+        }
+
+        function changeTopic() {
+            let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
+            let availableTopics;
+
+            // Adjust difficulty based on skips
+            if (skips.C >= 2) {
+                currentDifficulty = 'B'; // Switch to medium topics
+                skips.C = 0; // Reset skips for C
+            } else if (skips.B >= 2) {
+                currentDifficulty = 'A'; // Switch to easier topics
+                skips.B = 0; // Reset skips for B
+            } else if (skips.A >= 2) {
+                currentDifficulty = 'C'; // Switch to harder topics
+                skips.A = 0; // Reset skips for A
+            }
+
+            // Prioritize topic selection
+            if (currentDifficulty === 'A' && topics.A.length > 0) {
+                availableTopics = topics.A; // Select A topics if available
+            } else if (currentDifficulty === 'B' && topics.B.length > 0) {
+                availableTopics = topics.B; // Select B topics if available
+            } else if (topics.A.length > 0) {
+                availableTopics = topics.A; // Fallback to A if B is not available
+            } else if (topics.B.length > 0) {
+                availableTopics = topics.B; // Fallback to B if A is not available
+            } else {
+                availableTopics = topics.C; // Only use C if no A or B topics are available
+            }
+
+            if (availableTopics.length === 0) {
+                alert('No topics available for this difficulty.'); // Handle case where no topics are left
+                return;
+            }
+
+            if (usedTopics.length === availableTopics.length) {
+                usedTopics = []; // Reset if all topics used
+            }
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * availableTopics.length);
+            } while (usedTopics.includes(randomIndex));
+            usedTopics.push({ index: randomIndex, difficulty: currentDifficulty }); // Store both index and difficulty
+            currentTopicIndex = randomIndex;
+            document.getElementById('topic').innerText = availableTopics[currentTopicIndex].topic;
         }
 
         function showDefinition() {
-            const currentTopicText = document.getElementById('topic').innerText;
-            const currentDifficulty = 'A'; // Assuming difficulty A for this example
-            const availableTopics = topics[currentDifficulty];
-            const selectedTopic = availableTopics.find(topic => topic.topic === currentTopicText);
-            if (selectedTopic) {
-                document.getElementById('definition-text').innerText = selectedTopic.definition;
-                document.getElementById('definition-modal').style.display = 'block';
-                document.getElementById('overlay').style.display = 'block';
-            } else {
-                alert('No definition available for this topic.');
-            }
+            isPaused = true;
+            const currentTopic = topics[getCurrentDifficulty()][currentTopicIndex];
+            document.getElementById('definition-text').innerText = currentTopic.definition;
+            document.getElementById('definition-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
         }
 
         function closeDefinition() {
+            isPaused = false;
             document.getElementById('definition-modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
+            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
         }
 
+        function setTimer() {
+            const timerSlider = document.getElementById('timer-slider');
+            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (1, 2, or 3)
+            document.getElementById('timer').innerText = timeLeft; // Update displayed timer
+        }
+
+        // Load topics when the page is loaded
         window.onload = loadTopics;
     </script>
 </body>
