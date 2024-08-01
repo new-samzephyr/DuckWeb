@@ -150,7 +150,7 @@
             "definition": "A popular Italian dish with a round bread base, topped with cheese, sauce, and various other ingredients.",
             "difficulty": "A1"
         }
-    ]
+    ],
     "A2": [
         {
             "topic": "Literature",
@@ -282,7 +282,7 @@
             "definition": "Events where many bands or artists perform over a few days.",
             "difficulty": "A2"
         }
-    ]
+    ],
     "B1": [
         {
             "topic": "Education",
@@ -414,7 +414,7 @@
             "definition": "The introduction of new ideas, methods, or products that improve things.",
             "difficulty": "B1"
         }
-    ]
+    ],
     "B2": [
         {
             "topic": "Science",
@@ -541,7 +541,7 @@
             "definition": "Emerging and anticipated technologies that could shape the future, such as advanced robotics and nanotechnology.",
             "difficulty": "B2"
         }
-    ]
+    ],
     "C1": [
         {
             "topic": "Philosophy",
@@ -683,7 +683,7 @@
             "definition": "The study of fundamental questions about education, including its purpose and methods.",
             "difficulty": "C1"
         }
-    ]
+    ],
     "C2": [
         {
             "topic": "Innovation",
