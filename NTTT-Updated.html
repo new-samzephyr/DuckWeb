@@ -243,9 +243,19 @@
             let availableTopics = topics[currentDifficulty].filter(t => !usedTopics.includes(t));
 
             if (availableTopics.length === 0) {
-                alert('No more topics available at this difficulty level.');
-                restartGame();
-                return;
+                // Check across all difficulty levels if no topics are left in the current difficulty
+                for (const level in topics) {
+                    availableTopics = topics[level].filter(t => !usedTopics.includes(t));
+                    if (availableTopics.length > 0) {
+                        break;
+                    }
+                }
+
+                if (availableTopics.length === 0) {
+                    alert('No more topics available.');
+                    restartGame();
+                    return;
+                }
             }
 
             const randomIndex = Math.floor(Math.random() * availableTopics.length);
@@ -262,7 +272,6 @@
         }
 
         function showDefinition() {
-            const currentDifficulty = getCurrentDifficulty();
             const topic = usedTopics[usedTopics.length - 1];
             if (topic) {
                 document.getElementById('definition-text').innerText = topic.definition;
