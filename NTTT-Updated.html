@@ -207,26 +207,10 @@
         }
 
         function skipTopic() {
-            const currentDifficulty = getCurrentDifficulty();
-            skips[currentDifficulty]++;
-
-            if (skips[currentDifficulty] >= 2) {
-                adjustDifficulty(currentDifficulty);
-            }
-
+            // Simply change the topic without adjusting difficulty or using skips
             timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset timer to slider value
             document.getElementById('timer').innerText = timeLeft; // Update displayed timer
             changeTopic(); // Skip to the next topic
-        }
-
-        function adjustDifficulty(currentDifficulty) {
-            if (currentDifficulty === 'C') {
-                skips.C = 0; // Reset skips for C
-            } else if (currentDifficulty === 'B') {
-                skips.B = 0; // Reset skips for B
-            } else if (currentDifficulty === 'A') {
-                skips.A = 0; // Reset skips for A
-            }
         }
 
         function getCurrentDifficulty() {
@@ -250,82 +234,55 @@
             document.getElementById('restart').style.display = 'none';
             document.getElementById('start-pause').innerText = 'Start';
             document.getElementById('definition-link').style.display = 'none';
-            document.getElementById('timer-slider').disabled = false; // Re-enable the slider
             document.getElementById('skip').style.display = 'none'; // Hide skip button
+            document.getElementById('timer-slider').disabled = false; // Enable the slider
         }
 
         function changeTopic() {
-            let currentDifficulty = getCurrentDifficulty(); // Get the current difficulty
-            let availableTopics;
-
-            // Adjust difficulty based on skips
-            if (skips.C >= 2) {
-                currentDifficulty = 'B'; // Switch to medium topics
-                skips.C = 0; // Reset skips for C
-            } else if (skips.B >= 2) {
-                currentDifficulty = 'A'; // Switch to easier topics
-                skips.B = 0; // Reset skips for B
-            } else if (skips.A >= 2) {
-                currentDifficulty = 'C'; // Switch to harder topics
-                skips.A = 0; // Reset skips for A
-            }
-
-            // Prioritize topic selection
-            if (currentDifficulty === 'A' && topics.A.length > 0) {
-                availableTopics = topics.A; // Select A topics if available
-            } else if (currentDifficulty === 'B' && topics.B.length > 0) {
-                availableTopics = topics.B; // Select B topics if available
-            } else if (topics.A.length > 0) {
-                availableTopics = topics.A; // Fallback to A if B is not available
-            } else if (topics.B.length > 0) {
-                availableTopics = topics.B; // Fallback to B if A is not available
-            } else {
-                availableTopics = topics.C; // Only use C if no A or B topics are available
-            }
+            const currentDifficulty = getCurrentDifficulty(); // Use the current difficulty
+            let availableTopics = topics[currentDifficulty].filter(t => !usedTopics.includes(t));
 
             if (availableTopics.length === 0) {
-                alert('No topics available for this difficulty.'); // Handle case where no topics are left
+                alert('No more topics available at this difficulty level.');
+                restartGame();
                 return;
             }
 
-            if (usedTopics.length === availableTopics.length) {
-                usedTopics = []; // Reset if all topics used
-            }
-            
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * availableTopics.length);
-            } while (usedTopics.includes(availableTopics[randomIndex].topic));
-            
-            usedTopics.push(availableTopics[randomIndex]); // Store the actual topic object
-            currentTopicIndex = randomIndex;
-            document.getElementById('topic').innerText = availableTopics[currentTopicIndex].topic;
+            const randomIndex = Math.floor(Math.random() * availableTopics.length);
+            const topic = availableTopics[randomIndex];
+            document.getElementById('topic').innerText = topic.topic;
+
+            // Add topic to used list
+            usedTopics.push(topic);
+
+            // Update the topic index and wrap if necessary
+            currentTopicIndex = (currentTopicIndex + 1) % availableTopics.length;
         }
 
         function showDefinition() {
-            isPaused = true;
-            const currentTopic = usedTopics[usedTopics.length - 1]; // Get the last used topic
-            document.getElementById('definition-text').innerText = currentTopic.definition; // Use the topic object directly
-            document.getElementById('definition-modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('start-pause').innerText = 'Continue'; // Ensure correct button text
+            const currentDifficulty = getCurrentDifficulty();
+            const topic = usedTopics[usedTopics.length - 1];
+            if (topic) {
+                document.getElementById('definition-text').innerText = topic.definition;
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('definition-modal').style.display = 'block';
+                isPaused = true; // Pause the game
+            }
         }
 
         function closeDefinition() {
-            isPaused = false;
-            document.getElementById('definition-modal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
-            document.getElementById('start-pause').innerText = 'Pause'; // Ensure correct button text
+            document.getElementById('definition-modal').style.display = 'none';
+            isPaused = false; // Resume the game
         }
 
         function setTimer() {
-            const timerSlider = document.getElementById('timer-slider');
-            timeLeft = parseInt(timerSlider.value) * 10; // Set timeLeft based on slider value (1, 2, or 3)
+            const sliderValue = parseInt(document.getElementById('timer-slider').value);
+            timeLeft = sliderValue * 10; // Set the timer to the selected value
             document.getElementById('timer').innerText = timeLeft; // Update displayed timer
         }
 
-        // Load topics when the page is loaded
-        window.onload = loadTopics;
+        loadTopics(); // Load topics on page load
     </script>
 </body>
 </html>
