@@ -250,7 +250,9 @@
 
             const randomIndex = Math.floor(Math.random() * availableTopics.length);
             const topic = availableTopics[randomIndex];
-            document.getElementById('topic').innerText = topic.topic;
+
+            // Update the topic display to include difficulty
+            document.getElementById('topic').innerText = `${topic.topic} (${topic.difficulty})`;
 
             // Add topic to used list
             usedTopics.push(topic);
