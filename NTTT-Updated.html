@@ -127,18 +127,14 @@
     <script>
         let timer;
         let timeLeft = 20; // Default to 20 seconds
-        let currentTopicIndex = 0;
+        let currentRoundIndex = 0; // Track the current index in the round sequence
+        let roundSequence = []; // To hold the current round's topics
         let isPaused = false;
         let usedTopics = [];
         let topics = {
             A: [],
             B: [],
             C: []
-        };
-        let skips = {
-            A: 0,
-            B: 0,
-            C: 0
         };
 
         // Load topics from Topics.xml file
@@ -213,22 +209,52 @@
             changeTopic(); // Skip to the next topic
         }
 
-        function getCurrentDifficulty() {
-            if (usedTopics.length > 0) {
-                const lastUsed = usedTopics[usedTopics.length - 1];
-                return lastUsed.difficulty;
+        function changeTopic() {
+            if (roundSequence.length === 0) {
+                // Fill the round sequence with topics
+                for (let i = 0; i < 3; i++) { // Three A-level topics
+                    if (topics.A.length === 0) break; // Break if no more A topics
+                    const randomIndex = Math.floor(Math.random() * topics.A.length);
+                    roundSequence.push(topics.A[randomIndex]);
+                    topics.A.splice(randomIndex, 1); // Remove the topic from the pool
+                }
+
+                for (let i = 0; i < 2; i++) { // Two B-level topics
+                    if (topics.B.length === 0) break; // Break if no more B topics
+                    const randomIndex = Math.floor(Math.random() * topics.B.length);
+                    roundSequence.push(topics.B[randomIndex]);
+                    topics.B.splice(randomIndex, 1); // Remove the topic from the pool
+                }
+
+                if (topics.C.length > 0) { // One C-level topic
+                    const randomIndex = Math.floor(Math.random() * topics.C.length);
+                    roundSequence.push(topics.C[randomIndex]);
+                    topics.C.splice(randomIndex, 1); // Remove the topic from the pool
+                }
             }
-            return 'C'; // Default to hardest if no topics used
+
+            // Get the next topic from the round sequence
+            if (currentRoundIndex < roundSequence.length) {
+                const topic = roundSequence[currentRoundIndex];
+                document.getElementById('topic').innerText = `${topic.topic} (${topic.difficulty})`;
+                usedTopics.push(topic);
+                currentRoundIndex++;
+            } else {
+                // Reset for the next round
+                currentRoundIndex = 0;
+                roundSequence = []; // Clear the round sequence for the next round
+                changeTopic(); // Call changeTopic again to fill the new round sequence
+            }
         }
 
         function restartGame() {
             clearInterval(timer);
             timer = null;
             timeLeft = parseInt(document.getElementById('timer-slider').value) * 10; // Reset to selected time
-            currentTopicIndex = 0;
+            currentRoundIndex = 0;
             isPaused = false;
             usedTopics = [];
-            skips = { A: 0, B: 0, C: 0 }; // Reset skips for all difficulties
+            roundSequence = []; // Reset round sequence
             document.getElementById('topic').innerText = 'Press Start to Begin';
             document.getElementById('timer').innerText = timeLeft;
             document.getElementById('restart').style.display = 'none';
@@ -236,39 +262,6 @@
             document.getElementById('definition-link').style.display = 'none';
             document.getElementById('skip').style.display = 'none'; // Hide skip button
             document.getElementById('timer-slider').disabled = false; // Enable the slider
-        }
-
-        function changeTopic() {
-            const currentDifficulty = getCurrentDifficulty(); // Use the current difficulty
-            let availableTopics = topics[currentDifficulty].filter(t => !usedTopics.includes(t));
-
-            if (availableTopics.length === 0) {
-                // Check across all difficulty levels if no topics are left in the current difficulty
-                for (const level in topics) {
-                    availableTopics = topics[level].filter(t => !usedTopics.includes(t));
-                    if (availableTopics.length > 0) {
-                        break;
-                    }
-                }
-
-                if (availableTopics.length === 0) {
-                    alert('No more topics available.');
-                    restartGame();
-                    return;
-                }
-            }
-
-            const randomIndex = Math.floor(Math.random() * availableTopics.length);
-            const topic = availableTopics[randomIndex];
-
-            // Update the topic display to include difficulty
-            document.getElementById('topic').innerText = `${topic.topic} (${topic.difficulty})`;
-
-            // Add topic to used list
-            usedTopics.push(topic);
-
-            // Update the topic index and wrap if necessary
-            currentTopicIndex = (currentTopicIndex + 1) % availableTopics.length;
         }
 
         function showDefinition() {
